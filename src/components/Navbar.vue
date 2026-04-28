@@ -1,8 +1,9 @@
 <script setup>
-import { RouterLink, useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
+import { Collapse } from 'bootstrap'
 
 const route = useRoute()
+const router = useRouter()
 
 const navLinks = [
   { name: '首頁', to: '/' },
@@ -15,6 +16,16 @@ const navLinks = [
 function isActive(path) {
   return route.path === path
 }
+
+function collapseMenu() {
+  const el = document.getElementById('mainNav')
+  if (el) {
+    const bsCollapse = Collapse.getInstance(el)
+    if (bsCollapse) bsCollapse.hide()
+  }
+}
+
+router.afterEach(collapseMenu)
 </script>
 
 <template>

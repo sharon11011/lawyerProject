@@ -46,23 +46,22 @@ const faqs = [
     a: '首先，必須委任辯護律師全程協助，切勿獨自應訴。首次開庭通常為「準備程序」，法官會整理爭點、確認證據。您有「保持緘默」的權利，無需在沒有律師準備的情況下回答任何問題。審判期日前，律師會與您充分討論陳述策略及交互詰問的準備。',
   },
 ]
-
 </script>
 
 <template>
   <!-- Page Header -->
-  <div class="bg-navy py-5 text-center">
+  <div class="bg-navy py-5 text-center" data-aos="fade-down">
     <div class="container">
       <i class="bi bi-patch-question-fill fs-2 mb-2" style="color:#b8860b;"></i>
       <h1 class="text-white fw-bold">法律知識 Q&A</h1>
-      <p style="color:rgba(255,255,255,0.7);" class="mb-0">
+      <p style="color:rgba(255,255,255,.7);" class="mb-0">
         常見法律問題解析，助您在面對法律困境前先做好準備
       </p>
     </div>
   </div>
 
   <!-- Notice Banner -->
-  <div style="background:#fff8e1;border-bottom:2px solid #b8860b;">
+  <div style="background:#fff8e1;border-bottom:2px solid #b8860b;" data-aos="fade-down" data-aos-delay="100">
     <div class="container py-3">
       <div class="d-flex align-items-start gap-2">
         <i class="bi bi-info-circle-fill mt-1 flex-shrink-0" style="color:#b8860b;"></i>
@@ -78,7 +77,7 @@ const faqs = [
   <section class="py-5 bg-light-custom">
     <div class="container">
       <!-- Category Filter -->
-      <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center">
+      <div class="d-flex flex-wrap gap-2 mb-4 justify-content-center" data-aos="fade-up">
         <button
           v-for="cat in categories"
           :key="cat"
@@ -91,7 +90,7 @@ const faqs = [
       </div>
 
       <!-- Accordion -->
-      <div class="accordion" id="faqAccordion">
+      <div class="accordion" id="faqAccordion" data-aos="fade-up" data-aos-delay="100">
         <template v-for="(faq, index) in faqs" :key="index">
           <div
             v-show="activeCategory === '全部' || activeCategory === faq.category"
@@ -107,7 +106,7 @@ const faqs = [
               >
                 <span
                   class="badge me-3 flex-shrink-0"
-                  style="background:rgba(26,42,108,0.1);color:#1a2a6c;font-size:.7rem;"
+                  style="background:rgba(26,42,108,.1);color:#1a2a6c;font-size:.7rem;"
                 >
                   {{ faq.category }}
                 </span>
@@ -124,7 +123,11 @@ const faqs = [
       </div>
 
       <!-- More Question CTA -->
-      <div class="text-center mt-5 py-4 rounded-4" style="background:rgba(26,42,108,0.05);">
+      <div
+        class="text-center mt-5 py-4 rounded-4"
+        style="background:rgba(26,42,108,.05);"
+        data-aos="zoom-in"
+      >
         <i class="bi bi-chat-left-text-fill fs-2 mb-2" style="color:#b8860b;"></i>
         <h5 class="fw-bold mb-2" style="color:#1a2a6c;">找不到您的問題？</h5>
         <p class="text-muted small mb-3">歡迎直接聯繫我們，陳律師將親自為您解答。</p>

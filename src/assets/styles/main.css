@@ -177,3 +177,20 @@ footer a:hover {
     text-align: center;
   }
 }
+
+/* ── AOS 手機效能優化 ── */
+@media (max-width: 576px) {
+  [data-aos] {
+    transition-duration: 500ms !important;
+  }
+}
+
+/* 頁面切換時平滑淡入 */
+.router-page-enter-active,
+.router-page-leave-active {
+  transition: opacity 0.3s ease;
+}
+.router-page-enter-from,
+.router-page-leave-to {
+  opacity: 0;
+}

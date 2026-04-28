@@ -1,16 +1,26 @@
 <script setup>
 import ContactForm from '../components/ContactForm.vue'
+
+const contactInfos = [
+  { icon: 'bi-geo-alt-fill', title: '事務所地址', lines: ['台北市信義區忠孝東路五段 100 號', '8 樓 803 室'] },
+  { icon: 'bi-telephone-fill', title: '聯絡電話', lines: ['(02) 2345-6789', '緊急線：0912-345-678'] },
+  { icon: 'bi-envelope-fill', title: '電子信箱', lines: ['contact@chenlawyer.com.tw'] },
+]
+
+const hours = [
+  { day: '週一至週五', time: '09:00 – 18:00', available: true },
+  { day: '週六', time: '10:00 – 15:00', available: true },
+  { day: '週日 & 國定假日', time: '休息', available: false },
+]
 </script>
 
 <template>
   <!-- Page Header -->
-  <div class="bg-navy py-5 text-center">
+  <div class="bg-navy py-5 text-center" data-aos="fade-down">
     <div class="container">
       <i class="bi bi-envelope-fill fs-2 mb-2" style="color:#b8860b;"></i>
       <h1 class="text-white fw-bold">聯繫我們</h1>
-      <p style="color:rgba(255,255,255,0.7);" class="mb-0">
-        面對法律問題，請讓我們幫助您找到最佳解方
-      </p>
+      <p style="color:rgba(255,255,255,.7);" class="mb-0">面對法律問題，請讓我們幫助您找到最佳解方</p>
     </div>
   </div>
 
@@ -19,16 +29,17 @@ import ContactForm from '../components/ContactForm.vue'
       <div class="row g-5">
 
         <!-- Contact Info Column -->
-        <div class="col-lg-4">
+        <div class="col-lg-4" data-aos="fade-right">
           <h3 class="section-title">聯絡資訊</h3>
 
-          <!-- Info Cards -->
           <div class="d-flex flex-column gap-3 mb-4">
-            <div v-for="info in [
-              { icon: 'bi-geo-alt-fill', title: '事務所地址', lines: ['台北市信義區忠孝東路五段 100 號', '8 樓 803 室'] },
-              { icon: 'bi-telephone-fill', title: '聯絡電話', lines: ['(02) 2345-6789', '緊急線：0912-345-678'] },
-              { icon: 'bi-envelope-fill', title: '電子信箱', lines: ['contact@chenlawyer.com.tw'] },
-            ]" :key="info.title" class="d-flex gap-3 align-items-start">
+            <div
+              v-for="(info, i) in contactInfos"
+              :key="info.title"
+              class="d-flex gap-3 align-items-start"
+              data-aos="fade-up"
+              :data-aos-delay="i * 100"
+            >
               <div
                 class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
                 style="width:44px;height:44px;background:#1a2a6c;"
@@ -43,22 +54,22 @@ import ContactForm from '../components/ContactForm.vue'
           </div>
 
           <!-- Business Hours -->
-          <div class="card border-0 shadow-sm p-3 mb-4">
+          <div class="card border-0 shadow-sm p-3 mb-4" data-aos="fade-up" data-aos-delay="300">
             <h6 class="fw-bold mb-3" style="color:#1a2a6c;">
               <i class="bi bi-clock-fill me-2" style="color:#b8860b;"></i>服務時間
             </h6>
-            <div v-for="h in [
-              { day: '週一至週五', time: '09:00 – 18:00', available: true },
-              { day: '週六', time: '10:00 – 15:00', available: true },
-              { day: '週日 & 國定假日', time: '休息', available: false },
-            ]" :key="h.day" class="d-flex justify-content-between small py-1 border-bottom">
+            <div
+              v-for="h in hours"
+              :key="h.day"
+              class="d-flex justify-content-between small py-1 border-bottom"
+            >
               <span>{{ h.day }}</span>
               <span :style="h.available ? 'color:#1a2a6c;font-weight:600;' : 'color:#b8860b;'">{{ h.time }}</span>
             </div>
           </div>
 
           <!-- Social Links -->
-          <div class="d-flex flex-column gap-2">
+          <div class="d-flex flex-column gap-2" data-aos="fade-up" data-aos-delay="400">
             <a
               href="https://line.me/R/ti/p/@chenlawyer"
               target="_blank"
@@ -79,7 +90,7 @@ import ContactForm from '../components/ContactForm.vue'
         </div>
 
         <!-- Form Column -->
-        <div class="col-lg-8">
+        <div class="col-lg-8" data-aos="fade-left" data-aos-delay="100">
           <div class="card border-0 shadow p-4 p-md-5">
             <h3 class="section-title mb-4">線上諮詢申請</h3>
             <p class="text-muted small mb-4">
@@ -93,7 +104,7 @@ import ContactForm from '../components/ContactForm.vue'
       </div>
 
       <!-- Google Maps Placeholder -->
-      <div class="mt-5">
+      <div class="mt-5" data-aos="fade-up">
         <h4 class="fw-bold mb-3" style="color:#1a2a6c;">
           <i class="bi bi-map-fill me-2" style="color:#b8860b;"></i>位置地圖
         </h4>
@@ -101,16 +112,11 @@ import ContactForm from '../components/ContactForm.vue'
           class="rounded-4 overflow-hidden shadow-sm d-flex align-items-center justify-content-center"
           style="height:360px;background:#e8eaf0;border:2px dashed #1a2a6c;"
         >
-          <!-- Replace this div with actual <iframe> Google Maps embed -->
           <div class="text-center">
             <i class="bi bi-map fs-1 mb-3" style="color:#1a2a6c;"></i>
             <p class="fw-semibold mb-1" style="color:#1a2a6c;">Google 地圖嵌入區域</p>
             <p class="small text-muted">台北市信義區忠孝東路五段 100 號 8 樓</p>
-            <a
-              href="https://maps.google.com"
-              target="_blank"
-              class="btn btn-sm btn-outline-secondary"
-            >
+            <a href="https://maps.google.com" target="_blank" class="btn btn-sm btn-outline-secondary">
               在 Google 地圖開啟
             </a>
           </div>

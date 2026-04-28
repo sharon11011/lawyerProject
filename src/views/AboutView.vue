@@ -48,11 +48,11 @@ const memberships = [
 
 <template>
   <!-- Page Header -->
-  <div class="bg-navy py-5">
+  <div class="bg-navy py-5" data-aos="fade-down">
     <div class="container text-center">
       <i class="bi bi-person-badge-fill fs-2 mb-2" style="color:#b8860b;"></i>
       <h1 class="text-white fw-bold">關於律師</h1>
-      <p style="color:rgba(255,255,255,0.7);">以法律守護公義，以誠信贏得信賴</p>
+      <p style="color:rgba(255,255,255,.7);">以法律守護公義，以誠信贏得信賴</p>
     </div>
   </div>
 
@@ -60,12 +60,12 @@ const memberships = [
   <section class="py-5">
     <div class="container">
       <div class="row align-items-center g-5">
-        <div class="col-lg-4 text-center">
+        <div class="col-lg-4 text-center" data-aos="zoom-in">
           <img
             src="https://placehold.co/340x400/1a2a6c/b8860b?text=陳建宏+律師"
             alt="陳建宏律師"
             class="img-fluid rounded-4 shadow-lg mb-3"
-            style="border:3px solid rgba(184,134,11,0.35);"
+            style="border:3px solid rgba(184,134,11,.35);"
           />
           <h4 class="fw-bold mb-0" style="color:#1a2a6c;">陳建宏 律師</h4>
           <p class="text-muted small">Chen Chien-Hung, Attorney at Law</p>
@@ -76,7 +76,7 @@ const memberships = [
             <span class="badge" style="background:#b8860b;">遺產繼承</span>
           </div>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-8" data-aos="fade-left" data-aos-delay="100">
           <h2 class="section-title">個人簡介</h2>
           <p style="line-height:1.9;" class="text-muted">
             陳建宏律師擁有超過 18 年執業資歷，曾服務於國內外頂尖法律事務所，
@@ -88,15 +88,15 @@ const memberships = [
             因此，無論案件大小，他均親力親為，以最高標準對待每一位委任人，
             並秉持透明溝通的原則，讓客戶在每個關鍵時刻都能充分掌握案件動態。
           </p>
-
-          <!-- Memberships -->
           <div class="mt-3">
             <h6 class="fw-bold mb-2" style="color:#1a2a6c;">專業資格與會員資格</h6>
             <ul class="list-unstyled">
               <li
-                v-for="m in memberships"
+                v-for="(m, i) in memberships"
                 :key="m"
                 class="d-flex align-items-center gap-2 mb-1 small text-muted"
+                data-aos="fade-right"
+                :data-aos-delay="i * 80"
               >
                 <i class="bi bi-check2-circle" style="color:#b8860b;"></i>{{ m }}
               </li>
@@ -112,14 +112,20 @@ const memberships = [
     <div class="container">
       <div class="row g-5">
         <!-- Education -->
-        <div class="col-lg-5">
+        <div class="col-lg-5" data-aos="fade-right">
           <h3 class="section-title">學歷</h3>
           <div class="position-relative">
             <div
               class="position-absolute top-0 bottom-0 start-0"
               style="width:2px;background:linear-gradient(to bottom,#1a2a6c,#b8860b);margin-left:12px;"
             ></div>
-            <div v-for="edu in education" :key="edu.year" class="d-flex gap-3 mb-4 ps-4">
+            <div
+              v-for="(edu, i) in education"
+              :key="edu.year"
+              class="d-flex gap-3 mb-4 ps-4"
+              data-aos="fade-up"
+              :data-aos-delay="i * 120"
+            >
               <div class="flex-shrink-0">
                 <div
                   class="rounded-circle d-flex align-items-center justify-content-center"
@@ -138,12 +144,18 @@ const memberships = [
         </div>
 
         <!-- Experience -->
-        <div class="col-lg-7">
+        <div class="col-lg-7" data-aos="fade-left">
           <h3 class="section-title">執業經歷</h3>
-          <div v-for="exp in experience" :key="exp.period" class="card border-0 shadow-sm mb-3 p-4">
+          <div
+            v-for="(exp, i) in experience"
+            :key="exp.period"
+            class="card border-0 shadow-sm mb-3 p-4"
+            data-aos="fade-up"
+            :data-aos-delay="i * 100"
+          >
             <div class="d-flex flex-wrap justify-content-between align-items-start mb-1">
               <h6 class="fw-bold mb-0" style="color:#1a2a6c;">{{ exp.org }}</h6>
-              <span class="badge" style="background:rgba(26,42,108,0.1);color:#1a2a6c;">{{ exp.period }}</span>
+              <span class="badge" style="background:rgba(26,42,108,.1);color:#1a2a6c;">{{ exp.period }}</span>
             </div>
             <p class="small fw-semibold mb-1" style="color:#b8860b;">{{ exp.role }}</p>
             <p class="small text-muted mb-0">{{ exp.note }}</p>
@@ -156,13 +168,19 @@ const memberships = [
   <!-- Cases -->
   <section class="py-5">
     <div class="container">
-      <div class="text-center mb-5">
+      <div class="text-center mb-5" data-aos="fade-up">
         <h2 class="fw-bold" style="color:#1a2a6c;">經典案例</h2>
         <div class="divider-gold"></div>
         <p class="text-muted">精選代表性委任案件（已依規定去識別化）</p>
       </div>
       <div class="row g-4">
-        <div v-for="c in cases" :key="c.title" class="col-md-6">
+        <div
+          v-for="(c, i) in cases"
+          :key="c.title"
+          class="col-md-6"
+          data-aos="fade-up"
+          :data-aos-delay="(i % 2) * 150"
+        >
           <div class="card border-0 shadow-sm h-100 p-4" style="border-left:4px solid #b8860b !important;">
             <div class="d-flex justify-content-between align-items-start mb-2">
               <h6 class="fw-bold mb-0" style="color:#1a2a6c;">{{ c.title }}</h6>
@@ -180,7 +198,7 @@ const memberships = [
   </section>
 
   <!-- CTA -->
-  <section class="bg-navy py-4 text-center">
+  <section class="bg-navy py-4 text-center" data-aos="fade-up">
     <div class="container">
       <p class="text-white fw-semibold fs-5 mb-3">期待成為您最堅實的法律夥伴</p>
       <RouterLink to="/contact" class="btn btn-gold px-5">預約初次諮詢</RouterLink>
