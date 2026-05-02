@@ -64,12 +64,13 @@ const memberships = [
     <div class="container">
       <div class="row align-items-center g-5">
         <div class="col-lg-4 text-center" data-aos="zoom-in">
-          <img
-            :src="lawyerProfile"
-            alt="林仁修律師"
-            class="img-fluid rounded-4 shadow-lg mb-3"
-            style="border:3px solid rgba(184,134,11,.35);object-fit:cover;max-height:420px;width:100%;"
-          />
+          <div class="rounded-4 shadow-lg overflow-hidden mb-3 mx-auto" style="aspect-ratio:3/4;max-width:300px;border:3px solid rgba(184,134,11,.35);">
+            <img
+              :src="lawyerProfile"
+              alt="林仁修律師"
+              style="width:100%;height:100%;object-fit:cover;object-position:top;"
+            />
+          </div>
           <h4 class="fw-bold mb-0" style="color:#1a2a6c;">林仁修 律師</h4>
           <p class="text-muted small">Attorney at Law｜修律</p>
           <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">

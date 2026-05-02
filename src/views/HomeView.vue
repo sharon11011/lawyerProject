@@ -71,13 +71,14 @@ const whyUs = [
             </RouterLink>
           </div>
         </div>
-        <div class="col-lg-5 d-none d-lg-block text-center" data-aos="zoom-in" data-aos-delay="200">
-          <img
-            :src="lawyerProfile"
-            alt="林仁修律師"
-            class="img-fluid rounded-4 shadow-lg"
-            style="border:3px solid rgba(184,134,11,.4);object-fit:cover;max-height:480px;width:100%;"
-          />
+        <div class="col-lg-5 d-none d-lg-block" data-aos="zoom-in" data-aos-delay="200">
+          <div class="rounded-4 shadow-lg overflow-hidden mx-auto" style="aspect-ratio:3/4;max-width:360px;border:3px solid rgba(184,134,11,.4);">
+            <img
+              :src="lawyerProfile"
+              alt="林仁修律師"
+              style="width:100%;height:100%;object-fit:cover;object-position:top;"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -117,12 +118,13 @@ const whyUs = [
     <div class="container">
       <div class="row align-items-center g-5">
         <div class="col-lg-5" data-aos="fade-right">
-          <img
-            :src="lawyerOffice"
-            alt="修律｜林仁修律師"
-            class="img-fluid rounded-4 shadow"
-            style="object-fit:cover;max-height:400px;width:100%;"
-          />
+          <div class="rounded-4 shadow overflow-hidden" style="aspect-ratio:3/4;">
+            <img
+              :src="lawyerOffice"
+              alt="修律｜林仁修律師"
+              style="width:100%;height:100%;object-fit:cover;object-position:top;"
+            />
+          </div>
         </div>
         <div class="col-lg-7" data-aos="fade-left">
           <h2 class="section-title">為何選擇修律？</h2>
