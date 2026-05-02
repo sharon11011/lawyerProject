@@ -259,14 +259,24 @@ const memberships = [
               </div>
             </div>
 
+            <!-- YouTube Embed -->
+            <div class="ratio ratio-16x9 rounded-3 overflow-hidden mb-4 shadow-sm">
+              <iframe
+                src="https://www.youtube.com/embed/Q4-ax-z2iy8"
+                title="卡牌交易常見糾紛｜ft.林仁修律師"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+              ></iframe>
+            </div>
+
             <div class="d-flex flex-wrap gap-2">
               <a
-                href="https://www.youtube.com/@不準上一動"
+                href="https://www.youtube.com/watch?v=Q4-ax-z2iy8"
                 target="_blank"
                 class="btn btn-sm fw-semibold d-flex align-items-center gap-2"
                 style="background:#ff0000;color:#fff;border-radius:8px;"
               >
-                <i class="bi bi-youtube"></i>前往頻道觀看
+                <i class="bi bi-youtube"></i>在 YouTube 觀看
               </a>
               <RouterLink to="/contact" class="btn btn-sm btn-outline-gold">
                 有卡牌交易糾紛？諮詢律師
