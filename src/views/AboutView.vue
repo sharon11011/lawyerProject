@@ -1,4 +1,6 @@
 <script setup>
+import lawyerProfile from '@/assets/lawyer-profile.avif'
+
 const education = [
   { year: '學士', title: '法律學系 學士', note: '主修民事法、刑事法，奠定扎實法學根基' },
   { year: '律師', title: '通過中華民國律師高考', note: '取得正式律師資格，依法執業' },
@@ -63,10 +65,10 @@ const memberships = [
       <div class="row align-items-center g-5">
         <div class="col-lg-4 text-center" data-aos="zoom-in">
           <img
-            src="https://placehold.co/340x400/1a2a6c/b8860b?text=林仁修+律師"
+            :src="lawyerProfile"
             alt="林仁修律師"
             class="img-fluid rounded-4 shadow-lg mb-3"
-            style="border:3px solid rgba(184,134,11,.35);"
+            style="border:3px solid rgba(184,134,11,.35);object-fit:cover;max-height:420px;width:100%;"
           />
           <h4 class="fw-bold mb-0" style="color:#1a2a6c;">林仁修 律師</h4>
           <p class="text-muted small">Attorney at Law｜修律</p>

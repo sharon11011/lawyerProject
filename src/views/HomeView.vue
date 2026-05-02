@@ -1,5 +1,7 @@
 <script setup>
 import { RouterLink } from 'vue-router'
+import lawyerProfile from '@/assets/lawyer-profile.avif'
+import lawyerOffice from '@/assets/lawyer-office.avif'
 
 const services = [
   { icon: 'bi-person-check', title: '各類民事案件', desc: '債務糾紛、侵權損害、房屋租賃、婚姻家事，全程代理保障您的民事權益。' },
@@ -71,10 +73,10 @@ const whyUs = [
         </div>
         <div class="col-lg-5 d-none d-lg-block text-center" data-aos="zoom-in" data-aos-delay="200">
           <img
-            src="https://placehold.co/420x480/1a2a6c/b8860b?text=林仁修+律師"
+            :src="lawyerProfile"
             alt="林仁修律師"
             class="img-fluid rounded-4 shadow-lg"
-            style="border:3px solid rgba(184,134,11,.4);"
+            style="border:3px solid rgba(184,134,11,.4);object-fit:cover;max-height:480px;width:100%;"
           />
         </div>
       </div>
@@ -116,9 +118,10 @@ const whyUs = [
       <div class="row align-items-center g-5">
         <div class="col-lg-5" data-aos="fade-right">
           <img
-            src="https://placehold.co/480x400/f8f9fb/1a2a6c?text=修律｜林仁修律師"
-            alt="修律事務所"
+            :src="lawyerOffice"
+            alt="修律｜林仁修律師"
             class="img-fluid rounded-4 shadow"
+            style="object-fit:cover;max-height:400px;width:100%;"
           />
         </div>
         <div class="col-lg-7" data-aos="fade-left">
