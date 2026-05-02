@@ -1,48 +1,49 @@
 <script setup>
 const education = [
-  { year: '2002', title: '政治大學法律學系 學士', note: '主修民商法，以優等成績畢業' },
-  { year: '2005', title: '美國哥倫比亞大學 法學碩士（LL.M.）', note: '專研國際商事仲裁與比較法' },
-  { year: '2006', title: '通過中華民國律師高考', note: '首次應考，一次通過' },
+  { year: '學士', title: '法律學系 學士', note: '主修民事法、刑事法，奠定扎實法學根基' },
+  { year: '律師', title: '通過中華民國律師高考', note: '取得正式律師資格，依法執業' },
+  { year: '執業', title: '正式開業，創立修律', note: '秉持「精準判斷、穩健控管」理念服務每位委任人' },
 ]
 
 const experience = [
-  { period: '2006 – 2012', org: '理律法律事務所（LEES & LI）', role: '資深律師', note: '主責企業併購、商務合約及訴訟業務' },
-  { period: '2012 – 2018', org: '眾達國際法律事務所（Jones Day）', role: '合夥律師', note: '帶領六人團隊，處理跨國商務糾紛與仲裁' },
-  { period: '2018 – 至今', org: '陳建宏律師事務所', role: '主持律師', note: '獨立執業，服務中小企業及個人客戶' },
+  { period: '民事案件', org: '各類民事訴訟全程代理', role: '訴訟代理人', note: '處理債務糾紛、侵權損害、房地產爭議、婚姻家事等各類民事案件' },
+  { period: '刑事案件', org: '刑事辯護及告訴代理', role: '辯護律師', note: '從偵查到審判全程護航，處理詐欺、傷害、妨害名譽等各類刑事案件' },
+  { period: '警局陪偵', org: '偵查程序法律協助', role: '辯護人', note: '提供警局陪偵、搜索扣押協助，確保委任人的陳述權益受到完整保護' },
+  { period: '法律顧問', org: '企業及個人長期諮詢', role: '法律顧問', note: '合約審閱、勞資關係、公司治理，提供預防性法律服務' },
 ]
 
 const cases = [
   {
-    title: '跨國電商平台智慧財產侵權案',
-    tag: '商務合約 / IP',
-    result: '成功為客戶取得新台幣 1,200 萬元損害賠償',
-    desc: '代理本土品牌，向侵犯商標權的中國電商平台提起訴訟，歷時 18 個月取得勝訴判決，並完成跨境強制執行。',
-  },
-  {
-    title: '上市公司董事背信刑事辯護',
+    title: '刑事詐欺被告辯護案',
     tag: '刑事辯護',
-    result: '獲判無罪，維護委任人清白',
-    desc: '被告遭控背信罪，面臨五年以上有期徒刑。本所深入分析財務文件，找出關鍵有利證據，最終獲一、二審均判無罪。',
+    result: '獲不起訴處分，當事人免於起訴',
+    desc: '當事人遭誣指參與詐騙集團，本所從偵查初期介入，完整梳理金流紀錄與通訊記錄，成功向檢察官說明當事人無犯罪意圖，獲不起訴處分。',
   },
   {
-    title: '家族企業遺產分割調解案',
-    tag: '遺產繼承',
-    result: '6 個月內達成庭外和解，節省訴訟費用逾百萬',
-    desc: '四名繼承人就逾 3 億元的不動產及股份遺產產生嚴重爭議，本所擔任中立調解人，協助各方達成公平之分配協議。',
+    title: '車禍重傷損害賠償案',
+    tag: '民事訴訟',
+    result: '獲判賠償超過原求償金額',
+    desc: '代理車禍重傷被害人，針對加害人保險公司拒絕全額理賠之情形，提起民事訴訟並聲請假扣押，最終獲法院判賠高於預期之損害賠償金額。',
   },
   {
-    title: '科技業非法解僱集體訴訟',
-    tag: '勞資糾紛',
-    result: '34 名員工全數獲得合法資遣費及補償',
-    desc: '代理一間被外資收購科技公司的員工集體，成功舉證資方解僱程序違反勞基法，促使公司全額補發積欠薪資與退休金。',
+    title: '警局陪偵 — 商業糾紛衍生刑事告訴',
+    tag: '警局陪偵',
+    result: '成功釐清事實，偵查中獲不起訴',
+    desc: '委任人因商業合約糾紛遭對方提出詐欺刑事告訴，本所第一時間安排警局陪偵，完整準備書面說明，使檢察官於偵查中認定不構成犯罪。',
+  },
+  {
+    title: '遺產繼承糾紛非訟處理',
+    tag: '非訟事件',
+    result: '3 個月內完成繼承登記及分配協議',
+    desc: '數名繼承人就不動產遺產分配意見不一，本所協助評估各繼承人法定應繼分，並草擬遺產分割協議書，使各方在訴訟前達成共識，節省大量時間與訴訟成本。',
   },
 ]
 
 const memberships = [
-  '台北律師公會 會員',
-  '中華民國仲裁協會 認證仲裁人',
-  '台灣公司治理協會 顧問委員',
-  '美國紐約州律師協會 國際成員',
+  '中華民國律師公會 會員',
+  '領有中華民國律師執照（正式執業）',
+  'LINE 官方帳號認證律師：@xiu_law',
+  'Instagram 法律知識推廣：@xiu_lawyer',
 ]
 </script>
 
@@ -52,7 +53,7 @@ const memberships = [
     <div class="container text-center">
       <i class="bi bi-person-badge-fill fs-2 mb-2" style="color:#b8860b;"></i>
       <h1 class="text-white fw-bold">關於律師</h1>
-      <p style="color:rgba(255,255,255,.7);">以法律守護公義，以誠信贏得信賴</p>
+      <p style="color:rgba(255,255,255,.7);">精準法律判斷，穩健風險控管</p>
     </div>
   </div>
 
@@ -62,34 +63,46 @@ const memberships = [
       <div class="row align-items-center g-5">
         <div class="col-lg-4 text-center" data-aos="zoom-in">
           <img
-            src="https://placehold.co/340x400/1a2a6c/b8860b?text=陳建宏+律師"
-            alt="陳建宏律師"
+            src="https://placehold.co/340x400/1a2a6c/b8860b?text=林仁修+律師"
+            alt="林仁修律師"
             class="img-fluid rounded-4 shadow-lg mb-3"
             style="border:3px solid rgba(184,134,11,.35);"
           />
-          <h4 class="fw-bold mb-0" style="color:#1a2a6c;">陳建宏 律師</h4>
-          <p class="text-muted small">Chen Chien-Hung, Attorney at Law</p>
+          <h4 class="fw-bold mb-0" style="color:#1a2a6c;">林仁修 律師</h4>
+          <p class="text-muted small">Attorney at Law｜修律</p>
           <div class="d-flex flex-wrap justify-content-center gap-2 mt-2">
-            <span class="badge" style="background:#1a2a6c;">民事訴訟</span>
+            <span class="badge" style="background:#1a2a6c;">民事案件</span>
             <span class="badge" style="background:#b8860b;">刑事辯護</span>
-            <span class="badge" style="background:#1a2a6c;">商務合約</span>
-            <span class="badge" style="background:#b8860b;">遺產繼承</span>
+            <span class="badge" style="background:#1a2a6c;">警局陪偵</span>
+            <span class="badge" style="background:#b8860b;">法律顧問</span>
+          </div>
+          <div class="mt-3 d-flex justify-content-center gap-3">
+            <a href="https://line.me/R/ti/p/@xiu_law" target="_blank" class="btn btn-sm fw-semibold" style="background:#06c755;color:#fff;border-radius:20px;">
+              <i class="bi bi-chat-dots-fill me-1"></i>@xiu_law
+            </a>
+            <a href="https://www.instagram.com/xiu_lawyer" target="_blank" class="btn btn-sm fw-semibold text-white" style="background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);border-radius:20px;">
+              <i class="bi bi-instagram me-1"></i>@xiu_lawyer
+            </a>
           </div>
         </div>
         <div class="col-lg-8" data-aos="fade-left" data-aos-delay="100">
           <h2 class="section-title">個人簡介</h2>
           <p style="line-height:1.9;" class="text-muted">
-            陳建宏律師擁有超過 18 年執業資歷，曾服務於國內外頂尖法律事務所，
-            深厚的學術背景結合豐富的實務經驗，使其在處理複雜法律案件時，
-            總能提出精準、有效的法律策略。
+            林仁修律師，執業律師，創辦「修律」，致力於以清晰、直接的法律服務，
+            幫助每一位面對法律問題的當事人找到最有利的出路。
           </p>
           <p style="line-height:1.9;" class="text-muted">
-            陳律師深信，法律不僅是工具，更是守護社會公義的最後防線。
-            因此，無論案件大小，他均親力親為，以最高標準對待每一位委任人，
-            並秉持透明溝通的原則，讓客戶在每個關鍵時刻都能充分掌握案件動態。
+            秉持「精準法律判斷，穩健風險控管」的核心理念，
+            林律師深信法律服務不應只是冷冰冰的條文與程序，
+            而應讓每一位委任人都能真正理解自己的處境，
+            並在每個關鍵決定點做出最有利於自身的選擇。
+          </p>
+          <p style="line-height:1.9;" class="text-muted">
+            無論是民事糾紛、刑事案件、警局陪偵、非訟事件或長期法律顧問，
+            修律均以高度的責任心與專業素養，全程陪伴您度過每一個法律難關。
           </p>
           <div class="mt-3">
-            <h6 class="fw-bold mb-2" style="color:#1a2a6c;">專業資格與會員資格</h6>
+            <h6 class="fw-bold mb-2" style="color:#1a2a6c;">資格與認證</h6>
             <ul class="list-unstyled">
               <li
                 v-for="(m, i) in memberships"
@@ -107,13 +120,13 @@ const memberships = [
     </div>
   </section>
 
-  <!-- Education & Experience -->
+  <!-- Experience -->
   <section class="py-5 bg-light-custom">
     <div class="container">
       <div class="row g-5">
-        <!-- Education -->
+        <!-- 執業歷程 -->
         <div class="col-lg-5" data-aos="fade-right">
-          <h3 class="section-title">學歷</h3>
+          <h3 class="section-title">執業歷程</h3>
           <div class="position-relative">
             <div
               class="position-absolute top-0 bottom-0 start-0"
@@ -143,9 +156,9 @@ const memberships = [
           </div>
         </div>
 
-        <!-- Experience -->
+        <!-- 服務範疇 -->
         <div class="col-lg-7" data-aos="fade-left">
-          <h3 class="section-title">執業經歷</h3>
+          <h3 class="section-title">服務範疇</h3>
           <div
             v-for="(exp, i) in experience"
             :key="exp.period"
@@ -169,7 +182,7 @@ const memberships = [
   <section class="py-5">
     <div class="container">
       <div class="text-center mb-5" data-aos="fade-up">
-        <h2 class="fw-bold" style="color:#1a2a6c;">經典案例</h2>
+        <h2 class="fw-bold" style="color:#1a2a6c;">成功案例</h2>
         <div class="divider-gold"></div>
         <p class="text-muted">精選代表性委任案件（已依規定去識別化）</p>
       </div>
@@ -201,7 +214,7 @@ const memberships = [
   <section class="bg-navy py-4 text-center" data-aos="fade-up">
     <div class="container">
       <p class="text-white fw-semibold fs-5 mb-3">期待成為您最堅實的法律夥伴</p>
-      <RouterLink to="/contact" class="btn btn-gold px-5">預約初次諮詢</RouterLink>
+      <RouterLink to="/contact" class="btn btn-gold px-5">預約諮詢</RouterLink>
     </div>
   </section>
 </template>

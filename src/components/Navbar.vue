@@ -34,7 +34,7 @@ router.afterEach(collapseMenu)
       <!-- Brand -->
       <RouterLink class="navbar-brand navbar-brand-logo d-flex align-items-center gap-2" to="/">
         <i class="bi bi-scales"></i>
-        <span><span style="color: #b8860b;">陳建宏</span> 律師事務所</span>
+        <span><span style="color: #b8860b;">修律</span>｜林仁修律師</span>
       </RouterLink>
 
       <!-- Hamburger -->
