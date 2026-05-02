@@ -16,28 +16,22 @@ const experience = [
 
 const cases = [
   {
-    title: '刑事詐欺被告辯護案',
+    title: '成功為當事人在二審爭取緩刑',
     tag: '刑事辯護',
-    result: '獲不起訴處分，當事人免於起訴',
-    desc: '當事人遭誣指參與詐騙集團，本所從偵查初期介入，完整梳理金流紀錄與通訊記錄，成功向檢察官說明當事人無犯罪意圖，獲不起訴處分。',
+    result: '二審獲緩刑，免於入獄服刑',
+    desc: '當事人因申辦貸款遭詐騙，被誤認為詐騙集團領款車手，一審被判處有期徒刑六月。本所介入後積極協助與被害人達成和解，並於二審提出完整辯護意見，成功爭取緩刑，使當事人得以免於入獄。',
   },
   {
-    title: '車禍重傷損害賠償案',
-    tag: '民事訴訟',
-    result: '獲判賠償超過原求償金額',
-    desc: '代理車禍重傷被害人，針對加害人保險公司拒絕全額理賠之情形，提起民事訴訟並聲請假扣押，最終獲法院判賠高於預期之損害賠償金額。',
+    title: '轉讓禁藥案件成功爭取無罪判決',
+    tag: '刑事辯護',
+    result: '法院判決無罪，為當事人洗清冤名',
+    desc: '當事人遭友人指控轉讓第二級禁藥。本所深入分析證人證詞，找出陳述前後矛盾之關鍵瑕疵，透過嚴密的交互詰問質疑證人可信度，成功說服法院為當事人判決無罪。',
   },
   {
-    title: '警局陪偵 — 商業糾紛衍生刑事告訴',
-    tag: '警局陪偵',
-    result: '成功釐清事實，偵查中獲不起訴',
-    desc: '委任人因商業合約糾紛遭對方提出詐欺刑事告訴，本所第一時間安排警局陪偵，完整準備書面說明，使檢察官於偵查中認定不構成犯罪。',
-  },
-  {
-    title: '遺產繼承糾紛非訟處理',
-    tag: '非訟事件',
-    result: '3 個月內完成繼承登記及分配協議',
-    desc: '數名繼承人就不動產遺產分配意見不一，本所協助評估各繼承人法定應繼分，並草擬遺產分割協議書，使各方在訴訟前達成共識，節省大量時間與訴訟成本。',
+    title: '二十年有期徒刑第三審成功撤銷發回',
+    tag: '刑事辯護',
+    result: '最高法院撤銷原判決，發回重審',
+    desc: '當事人二審被判處二十年有期徒刑之貪汙重罪。本所在第三審提出原判決違背法令之論述，指出原審採證與事實認定之重大瑕疵，最終獲最高法院採納，撤銷原判決並發回高等法院重新審理。',
   },
 ]
 
@@ -207,6 +201,77 @@ const memberships = [
               <span class="small fw-semibold" style="color:#b8860b;">{{ c.result }}</span>
             </div>
             <p class="small text-muted mb-0">{{ c.desc }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Media Collaboration -->
+  <section class="py-5 bg-light-custom">
+    <div class="container">
+      <div class="text-center mb-5" data-aos="fade-up">
+        <h2 class="fw-bold" style="color:#1a2a6c;">媒體合作 &amp; 法律推廣</h2>
+        <div class="divider-gold"></div>
+        <p class="text-muted">透過多元媒體管道，將法律知識傳遞給更多人</p>
+      </div>
+
+      <div class="row justify-content-center" data-aos="zoom-in">
+        <div class="col-lg-8">
+          <div class="card border-0 shadow p-4 p-md-5">
+            <div class="d-flex flex-wrap align-items-center gap-3 mb-4">
+              <div
+                class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+                style="width:60px;height:60px;background:#ff0000;"
+              >
+                <i class="bi bi-youtube text-white fs-4"></i>
+              </div>
+              <div>
+                <div class="fw-bold fs-5" style="color:#1a2a6c;">YouTube 訪談合作</div>
+                <div class="small text-muted">知名電競 YouTuber ✕ 林仁修律師</div>
+              </div>
+              <span class="badge ms-auto" style="background:#b8860b;">特別企劃</span>
+            </div>
+
+            <h5 class="fw-bold mb-1" style="color:#1a2a6c;">
+              《卡牌交易常見糾紛》
+            </h5>
+            <p class="small fw-semibold mb-3" style="color:#b8860b;">
+              ft. 知名電競 YouTuber「不準上一動」
+            </p>
+            <p class="text-muted mb-4" style="line-height:1.9;">
+              受知名電競 YouTuber「不準上一動」之邀，針對近年台灣卡牌玩家社群中頻繁發生的交易糾紛進行深度訪談。
+              內容涵蓋：線上交易詐騙的法律認定、買賣糾紛如何蒐證、如何提出民事求償或刑事告訴，
+              以及交易前應注意的法律眉角，協助廣大玩家了解自身的法律權益。
+            </p>
+
+            <div class="row g-3 mb-4">
+              <div v-for="topic in [
+                { icon: 'bi-shield-exclamation', text: '線上交易詐騙的刑事認定' },
+                { icon: 'bi-camera', text: '糾紛發生時的蒐證方式' },
+                { icon: 'bi-currency-dollar', text: '民事求償流程說明' },
+                { icon: 'bi-file-earmark-check', text: '交易前應簽訂的書面約定' },
+              ]" :key="topic.text" class="col-sm-6">
+                <div class="d-flex align-items-center gap-2 small">
+                  <i :class="['bi', topic.icon]" style="color:#b8860b;font-size:1.1rem;flex-shrink:0;"></i>
+                  <span>{{ topic.text }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+              <a
+                href="https://www.youtube.com/@不準上一動"
+                target="_blank"
+                class="btn btn-sm fw-semibold d-flex align-items-center gap-2"
+                style="background:#ff0000;color:#fff;border-radius:8px;"
+              >
+                <i class="bi bi-youtube"></i>前往頻道觀看
+              </a>
+              <RouterLink to="/contact" class="btn btn-sm btn-outline-gold">
+                有卡牌交易糾紛？諮詢律師
+              </RouterLink>
+            </div>
           </div>
         </div>
       </div>
