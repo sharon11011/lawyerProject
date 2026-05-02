@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="UTF-8" />
+    <title>修律｜林仁修律師</title>
+    <script>
+      // GitHub Pages SPA redirect trick
+      // 把路徑資訊存到 sessionStorage，再跳回 index.html
+      var l = window.location;
+      l.replace(
+        l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+        l.pathname.split('/').slice(0, 2).join('/') +
+        '/?p=' + encodeURIComponent(l.pathname.split('/').slice(2).join('/')) +
+        (l.search ? '&q=' + encodeURIComponent(l.search.slice(1)) : '') +
+        l.hash
+      );
+    </script>
+  </head>
+  <body></body>
+</html>

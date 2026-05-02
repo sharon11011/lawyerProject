@@ -13,6 +13,20 @@
     <link rel="stylesheet" crossorigin href="/lawyerProject/assets/index-42s34PH8.css">
   </head>
   <body>
+    <script>
+      // 接收來自 404.html 的重定向，還原正確路徑
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get('p');
+        if (p !== null) {
+          var base = window.location.pathname;
+          var newPath = base + (p ? p : '') +
+            (params.get('q') ? '?' + params.get('q') : '') +
+            window.location.hash;
+          window.history.replaceState(null, null, newPath);
+        }
+      })();
+    </script>
     <div id="app"></div>
   </body>
 </html>
