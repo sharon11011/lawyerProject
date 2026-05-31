@@ -9,7 +9,7 @@
 export const EMAILJS = {
   PUBLIC_KEY: 'mhUjolo5FMXbfc9gb',   // Account > General > Public Key
   SERVICE_ID: 'service_7s6y87a',   // Email Services > Service ID
-  TEMPLATE_ID: 'template_nk1l2op',  // Email Templates > Template ID
+  TEMPLATE_ID: 'template_24nfidb',  // Email Templates > Template ID
 
   // 收件人清單（最多填三個）
   TO_EMAILS: [
