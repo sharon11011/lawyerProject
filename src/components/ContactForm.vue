@@ -27,7 +27,6 @@ function validate() {
   else if (!/^[\d\-\+\(\)\s]{8,}$/.test(form.phone)) errors.phone = '電話格式不正確'
   if (!form.subject)        errors.subject = '請選擇諮詢事由'
   if (!form.message.trim()) errors.message = '請輸入問題說明'
-  else if (form.message.trim().length < 20) errors.message = '說明至少需 20 個字'
   return Object.keys(errors).length === 0
 }
 
@@ -141,7 +140,7 @@ function reset() {
         <label class="form-label fw-semibold">問題說明 <span class="text-danger">*</span></label>
         <textarea v-model="form.message" rows="5" class="form-control"
           :class="{ 'is-invalid': errors.message }"
-          placeholder="請簡述您的法律問題或諮詢需求（至少 20 字）..."></textarea>
+          placeholder="請簡述您的法律問題或諮詢需求..."></textarea>
         <div class="invalid-feedback">{{ errors.message }}</div>
         <div class="form-text">{{ form.message.length }} 字</div>
       </div>

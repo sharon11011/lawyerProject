@@ -2,10 +2,10 @@
 import ContactForm from '../components/ContactForm.vue'
 
 const contactInfos = [
-  { icon: 'bi-telephone-fill', title: '電話諮詢', lines: ['0976-390-669'] },
-  { icon: 'bi-envelope-fill', title: '電子信箱', lines: ['lawyer.jasonlin@gmail.com'] },
-  { icon: 'bi-chat-dots-fill', title: 'LINE 官方帳號', lines: ['ID：@xiu_law', '點擊下方按鈕加入好友'] },
-  { icon: 'bi-instagram', title: 'Instagram', lines: ['@xiu_lawyer', '法律知識推廣、案例分享'] },
+  { icon: 'bi-telephone-fill', title: '電話諮詢',    href: 'tel:0976390669',                           lines: ['0976-390-669'] },
+  { icon: 'bi-envelope-fill',  title: '電子信箱',    href: 'mailto:lawyer.jasonlin@gmail.com',         lines: ['lawyer.jasonlin@gmail.com'] },
+  { icon: 'bi-chat-dots-fill', title: 'LINE 官方帳號', href: 'https://line.me/R/ti/p/@xiu_law',        lines: ['ID：@xiu_law', '點擊加入好友'] },
+  { icon: 'bi-instagram',      title: 'Instagram',   href: 'https://www.instagram.com/xiu_lawyer/',   lines: ['@xiu_lawyer', '法律知識推廣、案例分享'] },
 ]
 
 const hours = [
@@ -34,10 +34,12 @@ const hours = [
           <h3 class="section-title">聯絡方式</h3>
 
           <div class="d-flex flex-column gap-3 mb-4">
-            <div
+            <a
               v-for="(info, i) in contactInfos"
               :key="info.title"
-              class="d-flex gap-3 align-items-start"
+              :href="info.href"
+              :target="info.href.startsWith('http') ? '_blank' : undefined"
+              class="d-flex gap-3 align-items-start text-decoration-none"
               data-aos="fade-up"
               :data-aos-delay="i * 80"
             >
@@ -51,7 +53,7 @@ const hours = [
                 <div class="fw-semibold small mb-1" style="color:#1a2a6c;">{{ info.title }}</div>
                 <div v-for="line in info.lines" :key="line" class="text-muted small">{{ line }}</div>
               </div>
-            </div>
+            </a>
           </div>
 
           <!-- Business Hours -->
@@ -84,7 +86,7 @@ const hours = [
               </div>
             </a>
             <a
-              href="https://www.instagram.com/xiu_lawyer"
+              href="https://www.instagram.com/xiu_lawyer/"
               target="_blank"
               class="btn fw-semibold d-flex align-items-center gap-2 justify-content-center text-white"
               style="background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);border-radius:10px;"

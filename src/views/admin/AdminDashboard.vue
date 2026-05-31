@@ -9,6 +9,15 @@ const submissions = ref([])
 const search      = ref('')
 const sortDesc    = ref(true)
 
+const subjectStats = [
+  { label: '各類民事案件', color: '#198754' },
+  { label: '各類刑事案件', color: '#b8860b' },
+  { label: '警局陪偵',     color: '#dc3545' },
+  { label: '非訟事件',     color: '#0d6efd' },
+  { label: '法律顧問',     color: '#6f42c1' },
+  { label: '其他法律諮詢', color: '#6c757d' },
+]
+
 onMounted(() => {
   load()
 })
@@ -68,42 +77,24 @@ function logout() {
     <!-- Content -->
     <div class="container-fluid px-3 px-md-4 py-4">
       <!-- Stats cards -->
-      <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-          <div class="card border-0 shadow-sm h-100">
+      <div class="row g-3 mb-3">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm">
             <div class="card-body text-center py-3">
-              <div class="fs-2 fw-bold" style="color:#1a2a6c;">{{ submissions.length }}</div>
+              <div class="fs-1 fw-bold" style="color:#1a2a6c;">{{ submissions.length }}</div>
               <div class="small text-muted">總諮詢數</div>
             </div>
           </div>
         </div>
-        <div class="col-6 col-md-3">
+      </div>
+      <div class="row g-3 mb-4">
+        <div v-for="sub in subjectStats" :key="sub.label" class="col-6 col-md-4">
           <div class="card border-0 shadow-sm h-100">
             <div class="card-body text-center py-3">
-              <div class="fs-2 fw-bold" style="color:#b8860b;">
-                {{ submissions.filter(s => s.subject === '各類刑事案件').length }}
+              <div class="fs-3 fw-bold" :style="`color:${sub.color};`">
+                {{ submissions.filter(s => s.subject === sub.label).length }}
               </div>
-              <div class="small text-muted">刑事案件</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-6 col-md-3">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center py-3">
-              <div class="fs-2 fw-bold" style="color:#198754;">
-                {{ submissions.filter(s => s.subject === '各類民事案件').length }}
-              </div>
-              <div class="small text-muted">民事案件</div>
-            </div>
-          </div>
-        </div>
-        <div class="col-6 col-md-3">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center py-3">
-              <div class="fs-2 fw-bold" style="color:#dc3545;">
-                {{ submissions.filter(s => s.subject === '警局陪偵').length }}
-              </div>
-              <div class="small text-muted">警局陪偵</div>
+              <div class="small text-muted">{{ sub.label }}</div>
             </div>
           </div>
         </div>

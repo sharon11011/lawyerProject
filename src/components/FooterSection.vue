@@ -17,7 +17,7 @@ const currentYear = new Date().getFullYear()
             精準法律判斷，穩健風險控管，<br>為您打造最有利的解決方案。
           </p>
           <div class="d-flex gap-3 mt-3">
-            <a href="https://www.instagram.com/xiu_lawyer" target="_blank" aria-label="Instagram" class="fs-5"><i class="bi bi-instagram"></i></a>
+            <a href="https://www.instagram.com/xiu_lawyer/" target="_blank" aria-label="Instagram" class="fs-5"><i class="bi bi-instagram"></i></a>
             <a href="https://line.me/R/ti/p/@xiu_law" target="_blank" aria-label="LINE" class="fs-5"><i class="bi bi-chat-dots-fill"></i></a>
           </div>
         </div>
@@ -40,8 +40,16 @@ const currentYear = new Date().getFullYear()
           <ul class="list-unstyled small" style="color: rgba(255,255,255,0.7); line-height: 2;">
             <li><i class="bi bi-telephone-fill me-2" style="color: #b8860b;"></i>0976-390-669</li>
             <li><i class="bi bi-envelope-fill me-2" style="color: #b8860b;"></i>lawyer.jasonlin@gmail.com</li>
-            <li><i class="bi bi-chat-dots-fill me-2" style="color: #b8860b;"></i>LINE ID：@xiu_law</li>
-            <li><i class="bi bi-instagram me-2" style="color: #b8860b;"></i>@xiu_lawyer</li>
+            <li>
+              <a href="https://line.me/R/ti/p/@xiu_law" target="_blank" class="text-decoration-none" style="color:rgba(255,255,255,0.7);">
+                <i class="bi bi-chat-dots-fill me-2" style="color:#b8860b;"></i>LINE ID：@xiu_law
+              </a>
+            </li>
+            <li>
+              <a href="https://www.instagram.com/xiu_lawyer/" target="_blank" class="text-decoration-none" style="color:rgba(255,255,255,0.7);">
+                <i class="bi bi-instagram me-2" style="color:#b8860b;"></i>@xiu_lawyer
+              </a>
+            </li>
           </ul>
         </div>
 
