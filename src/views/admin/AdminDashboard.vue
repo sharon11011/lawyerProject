@@ -3,11 +3,15 @@ import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 const STORAGE_KEY = 'xiu_submissions'
+const COUNTER_NS  = 'xiu-law-site'
 const router = useRouter()
 
-const submissions = ref([])
-const search      = ref('')
-const sortDesc    = ref(true)
+const submissions  = ref([])
+const search       = ref('')
+const sortDesc     = ref(true)
+const showSubjects = ref(false)
+const visitThis    = ref(null)
+const visitLast    = ref(null)
 
 const subjectStats = [
   { label: '各類民事案件', color: '#198754' },
@@ -18,13 +22,37 @@ const subjectStats = [
   { label: '其他法律諮詢', color: '#6c757d' },
 ]
 
-onMounted(() => {
+onMounted(async () => {
   load()
+  await loadVisits()
 })
 
 function load() {
   submissions.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
 }
+
+async function loadVisits() {
+  const now = new Date()
+  const thisKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
+  const last = new Date(now.getFullYear(), now.getMonth() - 1)
+  const lastKey = `${last.getFullYear()}-${String(last.getMonth() + 1).padStart(2, '0')}`
+  try {
+    const [r1, r2] = await Promise.all([
+      fetch(`https://api.countapi.xyz/get/${COUNTER_NS}/${thisKey}`).then(r => r.json()),
+      fetch(`https://api.countapi.xyz/get/${COUNTER_NS}/${lastKey}`).then(r => r.json()),
+    ])
+    visitThis.value = r1.value ?? 0
+    visitLast.value = r2.value ?? 0
+  } catch {
+    visitThis.value = 0
+    visitLast.value = 0
+  }
+}
+
+const visitDiff = computed(() => {
+  if (visitThis.value === null || visitLast.value === null) return null
+  return visitThis.value - visitLast.value
+})
 
 const filtered = computed(() => {
   const q = search.value.trim().toLowerCase()
@@ -39,17 +67,6 @@ const filtered = computed(() => {
   }
   return sortDesc.value ? list : [...list].reverse()
 })
-
-function deleteOne(id) {
-  submissions.value = submissions.value.filter(s => s.id !== id)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(submissions.value))
-}
-
-function clearAll() {
-  if (!confirm('確定要清除所有紀錄？此操作無法復原。')) return
-  submissions.value = []
-  localStorage.removeItem(STORAGE_KEY)
-}
 
 function logout() {
   sessionStorage.removeItem('admin_token')
@@ -76,25 +93,79 @@ function logout() {
 
     <!-- Content -->
     <div class="container-fluid px-3 px-md-4 py-4">
-      <!-- Stats cards -->
+
+      <!-- 造訪統計 -->
       <div class="row g-3 mb-3">
-        <div class="col-12">
-          <div class="card border-0 shadow-sm">
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm h-100">
             <div class="card-body text-center py-3">
-              <div class="fs-1 fw-bold" style="color:#1a2a6c;">{{ submissions.length }}</div>
+              <div class="fs-2 fw-bold" style="color:#1a2a6c;">
+                <span v-if="visitThis === null" class="spinner-border spinner-border-sm"></span>
+                <span v-else>{{ visitThis }}</span>
+              </div>
+              <div class="small text-muted">本月造訪次數</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+              <div class="fs-2 fw-bold text-muted">
+                <span v-if="visitLast === null" class="spinner-border spinner-border-sm"></span>
+                <span v-else>{{ visitLast }}</span>
+              </div>
+              <div class="small text-muted">上月造訪次數</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+              <div class="fs-2 fw-bold">
+                <span v-if="visitDiff === null" class="spinner-border spinner-border-sm"></span>
+                <template v-else>
+                  <span :style="visitDiff >= 0 ? 'color:#198754' : 'color:#dc3545'">
+                    {{ visitDiff >= 0 ? '+' : '' }}{{ visitDiff }}
+                  </span>
+                </template>
+              </div>
+              <div class="small text-muted">與上月相比</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body text-center py-3">
+              <div class="fs-2 fw-bold" style="color:#1a2a6c;">{{ submissions.length }}</div>
               <div class="small text-muted">總諮詢數</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row g-3 mb-4">
-        <div v-for="sub in subjectStats" :key="sub.label" class="col-6 col-md-4">
-          <div class="card border-0 shadow-sm h-100">
-            <div class="card-body text-center py-3">
-              <div class="fs-3 fw-bold" :style="`color:${sub.color};`">
-                {{ submissions.filter(s => s.subject === sub.label).length }}
+
+      <!-- 諮詢事由統計（桌面版常駐；手機版可折疊） -->
+      <!-- 手機折疊按鈕 -->
+      <div class="d-md-none mb-2">
+        <button
+          class="btn btn-sm w-100 fw-semibold"
+          style="background:#e8ecf8;color:#1a2a6c;"
+          @click="showSubjects = !showSubjects"
+        >
+          <i :class="showSubjects ? 'bi bi-chevron-up' : 'bi bi-chevron-down'" class="me-1"></i>
+          各類案件數量{{ showSubjects ? '（收合）' : '（展開）' }}
+        </button>
+      </div>
+
+      <div :class="{ 'd-none': !showSubjects }" class="d-md-block">
+        <div class="row g-3 mb-4">
+          <div v-for="sub in subjectStats" :key="sub.label" class="col-6 col-md-4">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body text-center py-3">
+                <div class="fs-3 fw-bold" :style="`color:${sub.color};`">
+                  {{ submissions.filter(s => s.subject === sub.label).length }}
+                </div>
+                <div class="small text-muted">{{ sub.label }}</div>
               </div>
-              <div class="small text-muted">{{ sub.label }}</div>
             </div>
           </div>
         </div>
@@ -117,17 +188,13 @@ function logout() {
                 />
               </div>
             </div>
-            <div class="col-auto ms-md-auto d-flex gap-2">
+            <div class="col-auto ms-md-auto">
               <button
                 class="btn btn-sm btn-outline-secondary"
                 @click="sortDesc = !sortDesc"
-                :title="sortDesc ? '目前：最新在上' : '目前：最舊在上'"
               >
                 <i :class="sortDesc ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
                 {{ sortDesc ? '最新' : '最舊' }}
-              </button>
-              <button class="btn btn-sm btn-outline-danger" @click="clearAll" :disabled="!submissions.length">
-                <i class="bi bi-trash3 me-1"></i>清除全部
               </button>
             </div>
           </div>
@@ -156,7 +223,6 @@ function logout() {
                 <th class="fw-semibold text-muted small" style="width:8rem;">諮詢事由</th>
                 <th class="fw-semibold text-muted small">問題說明</th>
                 <th class="fw-semibold text-muted small" style="width:12rem;">送出時間</th>
-                <th class="fw-semibold text-muted small text-center" style="width:5rem;">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -177,15 +243,6 @@ function logout() {
                   <div style="white-space:pre-wrap;word-break:break-word;max-height:4.5em;overflow:hidden;">{{ item.message }}</div>
                 </td>
                 <td class="small text-muted">{{ item.sentAt }}</td>
-                <td class="text-center">
-                  <button
-                    class="btn btn-sm btn-link text-danger p-0"
-                    title="刪除"
-                    @click="deleteOne(item.id)"
-                  >
-                    <i class="bi bi-trash3"></i>
-                  </button>
-                </td>
               </tr>
             </tbody>
           </table>
@@ -196,9 +253,9 @@ function logout() {
       </div>
 
       <!-- Mobile cards -->
-      <div class="d-lg-none">
+      <div v-if="filtered.length" class="d-lg-none">
         <div
-          v-for="(item, idx) in filtered"
+          v-for="(item) in filtered"
           :key="item.id"
           class="card border-0 shadow-sm mb-3"
         >
@@ -210,9 +267,6 @@ function logout() {
                   {{ item.subject }}
                 </span>
               </div>
-              <button class="btn btn-sm btn-link text-danger p-0" @click="deleteOne(item.id)">
-                <i class="bi bi-trash3"></i>
-              </button>
             </div>
             <div class="small text-muted mb-1">
               <i class="bi bi-telephone me-1"></i>
@@ -230,6 +284,7 @@ function logout() {
           顯示 {{ filtered.length }} / {{ submissions.length }} 筆
         </div>
       </div>
+
     </div>
   </div>
 </template>
