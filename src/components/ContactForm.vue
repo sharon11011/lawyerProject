@@ -61,31 +61,24 @@ async function submitForm() {
   // 儲存到 localStorage（供後台讀取）
   saveToStorage(submission)
 
-  // EmailJS 寄信給每個收件人
+  // EmailJS 寄信（主收件人；其餘 email 請在 EmailJS 範本的 BCC 欄位設定）
   const templateParams = {
     from_name:  submission.name,
     from_phone: submission.phone,
     subject:    submission.subject,
     message:    submission.message,
     sent_at:    submission.sentAt,
+    to_email:   EMAILJS.TO_EMAILS[0],
   }
 
   try {
     const configured = EMAILJS.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'
     if (configured) {
-      await Promise.all(
-        EMAILJS.TO_EMAILS.map(email =>
-          emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_ID, {
-            ...templateParams,
-            to_email: email,
-          })
-        )
-      )
+      await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_ID, templateParams)
     }
     submitted.value = true
   } catch (err) {
     console.error('EmailJS error:', err)
-    // 即使寄信失敗，資料已存入後台，仍視為送出成功
     submitted.value = true
   } finally {
     loading.value = false
