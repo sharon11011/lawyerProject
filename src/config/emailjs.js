@@ -11,11 +11,11 @@ export const EMAILJS = {
   SERVICE_ID: 'service_7s6y87a',   // Email Services > Service ID
   TEMPLATE_ID: 'template_24nfidb',  // Email Templates > Template ID
 
-  // 收件人清單（最多填三個）
+  // 收件人清單
   TO_EMAILS: [
     'sy.huang.9511@gmail.com',
-    // 'second@email.com',
-    // 'third@email.com',
+    'lawyer.jasonlin@gmail.com',
+    'ms0006553@gmail.com',
   ],
 }
 
