@@ -24,7 +24,7 @@ function validate() {
   Object.keys(errors).forEach(k => delete errors[k])
   if (!form.name.trim())    errors.name    = '請輸入姓名'
   if (!form.phone.trim())   errors.phone   = '請輸入聯絡電話'
-  else if (!/^[\d\-\+\(\)\s]{8,}$/.test(form.phone)) errors.phone = '電話格式不正確'
+  else if (!/^09\d{2}[\s\-]?\d{3}[\s\-]?\d{3}$/.test(form.phone.trim())) errors.phone = '請輸入正確的手機號碼（09 開頭，共 10 碼）'
   if (!form.subject)        errors.subject = '請選擇諮詢事由'
   if (!form.message.trim()) errors.message = '請輸入問題說明'
   return Object.keys(errors).length === 0
