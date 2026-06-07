@@ -16,7 +16,7 @@ router.afterEach((to) => {
     const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
     if (!sessionStorage.getItem(`xiu_v_${month}`)) {
       sessionStorage.setItem(`xiu_v_${month}`, '1')
-      supabase.from('visits').insert({ month }).catch(() => {})
+      supabase.from('visits').insert({ month }).then(() => {})
     }
   }
 })

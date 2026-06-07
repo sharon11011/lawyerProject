@@ -62,16 +62,6 @@ async function submitForm() {
   // 儲存到 localStorage（本地備份）
   saveToStorage(submission)
 
-  // 儲存到 Supabase
-  supabase.from('submissions').insert({
-    name:    submission.name,
-    phone:   submission.phone,
-    subject: submission.subject,
-    message: submission.message,
-    sent_at: submission.sentAt,
-  }).catch(err => console.error('Supabase insert error:', err))
-
-  // EmailJS 寄信（主收件人；其餘 email 請在 EmailJS 範本的 BCC 欄位設定）
   const templateParams = {
     from_name:  submission.name,
     from_phone: submission.phone,
@@ -82,13 +72,24 @@ async function submitForm() {
   }
 
   try {
+    // 儲存到 Supabase
+    const { error: dbErr } = await supabase.from('submissions').insert({
+      name:    submission.name,
+      phone:   submission.phone,
+      subject: submission.subject,
+      message: submission.message,
+      sent_at: submission.sentAt,
+    })
+    if (dbErr) console.error('Supabase insert error:', dbErr)
+
+    // EmailJS 寄信
     const configured = EMAILJS.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'
     if (configured) {
       await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_ID, templateParams)
     }
     submitted.value = true
   } catch (err) {
-    console.error('EmailJS error:', err)
+    console.error('送出錯誤:', err)
     submitted.value = true
   } finally {
     loading.value = false
