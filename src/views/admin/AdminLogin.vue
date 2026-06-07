@@ -27,7 +27,7 @@ async function login() {
     })
     sessionStorage.setItem('admin_token', 'xiu_admin_authenticated')
     sessionStorage.setItem('admin_login_time', now)
-    supabase.from('admin_logs').insert({ username: 'admin', action: 'login', detail: now }).catch(() => {})
+    supabase.from('admin_logs').insert({ username: 'admin', action: 'login', detail: now }).then(() => {})
     router.push('/admin')
   } else {
     error.value = '帳號或密碼錯誤，請重新輸入'

@@ -89,7 +89,7 @@ const filtered = computed(() => {
 })
 
 function logout() {
-  supabase.from('admin_logs').insert({ username: 'admin', action: 'logout', detail: null }).catch(() => {})
+  supabase.from('admin_logs').insert({ username: 'admin', action: 'logout', detail: null }).then(() => {})
   sessionStorage.removeItem('admin_token')
   sessionStorage.removeItem('admin_login_time')
   router.push('/admin/login')
