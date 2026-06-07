@@ -21,8 +21,8 @@ async function login() {
   loading.value = false
 
   const accounts = [
-    { username: 'admin', password: '1234' },
-    { username: '1234',  password: '1234' },
+    { username: 'jasonlin', password: '44445555' },
+    { username: '1234',     password: '1234' },
   ]
   const matched = accounts.find(a => a.username === username.value && a.password === password.value)
 
