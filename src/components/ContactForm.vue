@@ -4,9 +4,9 @@ import emailjs from '@emailjs/browser'
 import { EMAILJS } from '@/config/emailjs.js'
 import { supabase } from '@/config/supabase.js'
 
-const STORAGE_KEY = 'xiu_submissions'
-
 const form = reactive({ name: '', phone: '', subject: '', message: '' })
+const honeypot    = ref('')
+const lastSubmit  = ref(0)
 
 const subjects = [
   '各類民事案件', '各類刑事案件', '警局陪偵', '非訟事件', '法律顧問', '其他法律諮詢',
@@ -31,62 +31,46 @@ function validate() {
   return Object.keys(errors).length === 0
 }
 
-function saveToStorage(data) {
-  const list = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-  list.unshift(data)
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-}
-
 async function submitForm() {
+  if (honeypot.value) return
+  if (Date.now() - lastSubmit.value < 10000) {
+    sendError.value = '請稍候片刻再送出'
+    return
+  }
   if (!validate()) return
-  loading.value  = true
+
+  loading.value   = true
   sendError.value = ''
 
   const now = new Date()
   const sentAt = now.toLocaleString('zh-TW', {
     year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
-    hour12: false,
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
   })
 
-  const submission = {
-    id:        `${Date.now()}-${Math.random().toString(36).slice(2,7)}`,
-    name:      form.name.trim(),
-    phone:     form.phone.trim(),
-    subject:   form.subject,
-    message:   form.message.trim(),
-    sentAt,
-    timestamp: now.toISOString(),
-  }
-
-  // 儲存到 localStorage（本地備份）
-  saveToStorage(submission)
-
   const templateParams = {
-    from_name:  submission.name,
-    from_phone: submission.phone,
-    subject:    submission.subject,
-    message:    submission.message,
-    sent_at:    submission.sentAt,
+    from_name:  form.name.trim(),
+    from_phone: form.phone.trim(),
+    subject:    form.subject,
+    message:    form.message.trim(),
+    sent_at:    sentAt,
     to_email:   EMAILJS.TO_EMAILS[0],
   }
 
   try {
-    // 儲存到 Supabase
     const { error: dbErr } = await supabase.from('submissions').insert({
-      name:    submission.name,
-      phone:   submission.phone,
-      subject: submission.subject,
-      message: submission.message,
-      sent_at: submission.sentAt,
+      name:    form.name.trim(),
+      phone:   form.phone.trim(),
+      subject: form.subject,
+      message: form.message.trim(),
+      sent_at: sentAt,
     })
     if (dbErr) console.error('Supabase insert error:', dbErr)
 
-    // EmailJS 寄信
-    const configured = EMAILJS.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'
-    if (configured) {
+    if (EMAILJS.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
       await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_ID, templateParams)
     }
+    lastSubmit.value = Date.now()
     submitted.value = true
   } catch (err) {
     console.error('送出錯誤:', err)
@@ -98,8 +82,8 @@ async function submitForm() {
 
 function reset() {
   Object.assign(form, { name: '', phone: '', subject: '', message: '' })
-  submitted.value  = false
-  sendError.value  = ''
+  submitted.value = false
+  sendError.value = ''
 }
 </script>
 
@@ -115,6 +99,9 @@ function reset() {
 
   <!-- Form -->
   <form v-else @submit.prevent="submitForm" novalidate>
+    <!-- Honeypot：機器人偵測（隱藏欄位，真實使用者不會填寫） -->
+    <input v-model="honeypot" type="text" name="website" style="display:none;" tabindex="-1" autocomplete="off" />
+
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label fw-semibold">姓名 <span class="text-danger">*</span></label>
@@ -149,10 +136,15 @@ function reset() {
         <div class="form-text">{{ form.message.length }} 字</div>
       </div>
 
+      <div v-if="sendError" class="col-12">
+        <div class="alert alert-warning py-2 small">{{ sendError }}</div>
+      </div>
+
       <div class="col-12">
         <p class="small text-muted mb-0">
           <i class="bi bi-shield-lock me-1"></i>
-          您的個人資料將依個資法規定妥善保護，僅用於本次法律諮詢聯繫使用。
+          您的個人資料將依個資法規定妥善保護，僅用於本次法律諮詢聯繫。
+          <RouterLink to="/privacy" class="text-decoration-none" style="color:#b8860b;">隱私權政策</RouterLink>
         </p>
       </div>
 

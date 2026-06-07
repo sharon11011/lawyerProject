@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { supabase } from '@/config/supabase.js'
 
 const router   = useRouter()
-const username = ref('')
+const email    = ref('')
 const password = ref('')
 const error    = ref('')
 const loading  = ref(false)
@@ -12,84 +12,81 @@ const showPwd  = ref(false)
 
 async function login() {
   error.value = ''
-  if (!username.value || !password.value) {
+  if (!email.value || !password.value) {
     error.value = '請輸入帳號與密碼'
     return
   }
   loading.value = true
-  await new Promise(r => setTimeout(r, 600))
+
+  const { data, error: authErr } = await supabase.auth.signInWithPassword({
+    email:    email.value.trim(),
+    password: password.value,
+  })
+
   loading.value = false
 
-  const accounts = [
-    { username: 'jasonlin', password: '44445555' },
-    { username: '1234',     password: '1234' },
-  ]
-  const matched = accounts.find(a => a.username === username.value && a.password === password.value)
-
-  if (matched) {
-    const now = new Date().toLocaleString('zh-TW', {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-    })
-    sessionStorage.setItem('admin_token', 'xiu_admin_authenticated')
-    sessionStorage.setItem('admin_login_time', now)
-    sessionStorage.setItem('admin_username', matched.username)
-    supabase.from('admin_logs').insert({ username: matched.username, action: 'login', detail: now }).then(() => {})
-    router.push('/admin')
-  } else {
+  if (authErr || !data.session) {
     error.value = '帳號或密碼錯誤，請重新輸入'
     password.value = ''
+    return
   }
+
+  const now = new Date().toLocaleString('zh-TW', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  })
+  sessionStorage.setItem('admin_login_time', now)
+
+  supabase.from('admin_logs').insert({
+    username: data.user.email,
+    action: 'login',
+    detail: now,
+  }).then(() => {})
+
+  router.push('/admin')
 }
 </script>
 
 <template>
   <div class="admin-login-bg d-flex align-items-center justify-content-center min-vh-100">
-    <!-- Background overlay -->
     <div class="admin-login-overlay"></div>
 
     <div class="position-relative" style="z-index:2;width:100%;max-width:420px;padding:1.5rem;">
-      <!-- Card -->
       <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
-        <!-- Header -->
         <div class="card-header text-center py-4 border-0" style="background:#111c4e;">
           <i class="bi bi-scales fs-1 mb-2" style="color:#b8860b;display:block;"></i>
           <h5 class="text-white fw-bold mb-0">修律管理後台</h5>
           <p class="small mb-0" style="color:rgba(255,255,255,.55);">Xiu Law Admin Panel</p>
         </div>
 
-        <!-- Body -->
         <div class="card-body p-4 p-md-5">
           <h6 class="fw-bold mb-4 text-center" style="color:#1a2a6c;">
             <i class="bi bi-shield-lock me-1" style="color:#b8860b;"></i>管理員登入
           </h6>
 
-          <!-- Error Alert -->
           <div v-if="error" class="alert alert-danger py-2 small d-flex align-items-center gap-2" role="alert">
             <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
             {{ error }}
           </div>
 
           <form @submit.prevent="login" novalidate>
-            <!-- Username -->
             <div class="mb-3">
-              <label class="form-label fw-semibold small">帳號</label>
+              <label class="form-label fw-semibold small">管理員信箱</label>
               <div class="input-group">
                 <span class="input-group-text" style="background:#f0f2f8;border-color:#dee2e6;">
-                  <i class="bi bi-person-fill" style="color:#1a2a6c;"></i>
+                  <i class="bi bi-envelope-fill" style="color:#1a2a6c;"></i>
                 </span>
                 <input
-                  v-model="username"
-                  type="text"
+                  v-model="email"
+                  type="email"
                   class="form-control"
-                  placeholder="請輸入帳號"
-                  autocomplete="username"
+                  placeholder="請輸入管理員信箱"
+                  autocomplete="email"
                   @keydown.enter="login"
                 />
               </div>
             </div>
 
-            <!-- Password -->
             <div class="mb-4">
               <label class="form-label fw-semibold small">密碼</label>
               <div class="input-group">
@@ -131,7 +128,6 @@ async function login() {
           </form>
         </div>
 
-        <!-- Footer -->
         <div class="card-footer text-center py-3 border-0" style="background:#f8f9fb;">
           <RouterLink to="/" class="small text-decoration-none" style="color:#b8860b;">
             <i class="bi bi-arrow-left me-1"></i>返回官網
@@ -151,7 +147,6 @@ async function login() {
   position: relative;
   background: linear-gradient(135deg, #0a1540 0%, #1a2a6c 60%, #2a3f8f 100%);
 }
-
 .admin-login-overlay {
   position: absolute;
   inset: 0;

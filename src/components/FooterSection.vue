@@ -76,6 +76,7 @@ const currentYear = new Date().getFullYear()
       <hr style="border-color: rgba(255,255,255,0.1); margin-top: 2rem;">
       <p class="text-center small mb-0" style="color: rgba(255,255,255,0.4);">
         &copy; {{ currentYear }} 修律｜林仁修律師 版權所有
+        ｜<RouterLink to="/privacy" class="text-decoration-none" style="color:rgba(255,255,255,0.4);">隱私權政策</RouterLink>
       </p>
     </div>
   </footer>
