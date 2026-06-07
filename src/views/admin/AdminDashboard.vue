@@ -13,6 +13,7 @@ const showSubjects = ref(false)
 const visitThis    = ref(null)
 const visitLast    = ref(null)
 const loginTime    = ref(sessionStorage.getItem('admin_login_time') || '—')
+const loginUser    = ref(sessionStorage.getItem('admin_username') || 'admin')
 const lastAction   = ref('')
 
 const subjectStats = [
@@ -121,6 +122,7 @@ function formatLog(log) {
 
     <!-- Session info bar -->
     <div class="px-3 px-md-4 py-2 d-flex flex-wrap gap-3" style="background:#1a2a6c;font-size:.78rem;color:rgba(255,255,255,.65);">
+      <span><i class="bi bi-person-fill me-1" style="color:#b8860b;"></i>{{ loginUser }}</span>
       <span><i class="bi bi-clock me-1" style="color:#b8860b;"></i>登入時間：{{ loginTime }}</span>
       <span v-if="lastAction"><i class="bi bi-activity me-1" style="color:#b8860b;"></i>最後操作：{{ lastAction }}</span>
     </div>
@@ -330,6 +332,7 @@ function formatLog(log) {
                     <div>
                       <div class="small fw-semibold" style="color:#1a2a6c;">
                         {{ log.action === 'login' ? '登入' : '登出' }}
+                        <span class="ms-1 badge rounded-pill" style="background:#e8ecf8;color:#1a2a6c;font-weight:500;font-size:.7rem;">{{ log.username }}</span>
                       </div>
                       <div class="text-muted" style="font-size:.72rem;">{{ formatLog(log) }}</div>
                     </div>

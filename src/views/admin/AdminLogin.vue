@@ -20,14 +20,21 @@ async function login() {
   await new Promise(r => setTimeout(r, 600))
   loading.value = false
 
-  if (username.value === 'admin' && password.value === '1234') {
+  const accounts = [
+    { username: 'admin', password: '1234' },
+    { username: '1234',  password: '1234' },
+  ]
+  const matched = accounts.find(a => a.username === username.value && a.password === password.value)
+
+  if (matched) {
     const now = new Date().toLocaleString('zh-TW', {
       year: 'numeric', month: '2-digit', day: '2-digit',
       hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
     })
     sessionStorage.setItem('admin_token', 'xiu_admin_authenticated')
     sessionStorage.setItem('admin_login_time', now)
-    supabase.from('admin_logs').insert({ username: 'admin', action: 'login', detail: now }).then(() => {})
+    sessionStorage.setItem('admin_username', matched.username)
+    supabase.from('admin_logs').insert({ username: matched.username, action: 'login', detail: now }).then(() => {})
     router.push('/admin')
   } else {
     error.value = '帳號或密碼錯誤，請重新輸入'
