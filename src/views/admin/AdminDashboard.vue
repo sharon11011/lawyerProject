@@ -54,7 +54,7 @@ async function loadLogs() {
   const { data } = await supabase
     .from('admin_logs')
     .select('*')
-    .in('action', ['login', 'logout'])
+    .eq('action', 'login')
     .order('created_at', { ascending: false })
     .limit(20)
   if (data) adminLogs.value = data
@@ -90,7 +90,6 @@ const filtered = computed(() => {
 })
 
 function logout() {
-  supabase.from('admin_logs').insert({ username: 'admin', action: 'logout', detail: null }).then(() => {})
   sessionStorage.removeItem('admin_token')
   sessionStorage.removeItem('admin_login_time')
   router.push('/admin/login')
