@@ -54,8 +54,9 @@ async function loadLogs() {
   const { data } = await supabase
     .from('admin_logs')
     .select('*')
+    .in('action', ['login', 'logout'])
     .order('created_at', { ascending: false })
-    .limit(10)
+    .limit(20)
   if (data) adminLogs.value = data
 }
 
@@ -98,7 +99,7 @@ function logout() {
 function formatLog(log) {
   const d = new Date(log.created_at)
   return d.toLocaleString('zh-TW', {
-    month: '2-digit', day: '2-digit',
+    year: 'numeric', month: '2-digit', day: '2-digit',
     hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
   })
 }
@@ -311,7 +312,7 @@ function formatLog(log) {
           <div class="card border-0 shadow-sm h-100">
             <div class="card-header border-0 py-3" style="background:#f0f3fa;">
               <h6 class="fw-bold mb-0" style="color:#1a2a6c;">
-                <i class="bi bi-person-badge me-2" style="color:#b8860b;"></i>管理員操作紀錄
+                <i class="bi bi-person-badge me-2" style="color:#b8860b;"></i>登入紀錄
               </h6>
             </div>
             <div class="card-body p-0">
@@ -322,21 +323,17 @@ function formatLog(log) {
                   :key="log.id"
                   class="list-group-item px-3 py-2"
                 >
-                  <div class="d-flex justify-content-between align-items-center">
-                    <span class="small fw-semibold" style="color:#1a2a6c;">
-                      <i class="bi me-1" :class="{
-                        'bi-box-arrow-in-right': log.action === 'login',
-                        'bi-box-arrow-right':    log.action === 'logout',
-                        'bi-search':             log.action === '搜尋紀錄',
-                        'bi-sort-down':          log.action.startsWith('排序'),
-                        'bi-grid':               log.action === '開啟後台',
-                      }"></i>
-                      {{ log.action }}
-                    </span>
-                    <span class="text-muted" style="font-size:.72rem;">{{ formatLog(log) }}</span>
-                  </div>
-                  <div v-if="log.detail && log.action === '搜尋紀錄'" class="text-muted mt-1" style="font-size:.72rem;">
-                    關鍵字：{{ log.detail }}
+                  <div class="d-flex align-items-center gap-2">
+                    <i
+                      class="bi fs-6"
+                      :class="log.action === 'login' ? 'bi-box-arrow-in-right text-success' : 'bi-box-arrow-right text-danger'"
+                    ></i>
+                    <div>
+                      <div class="small fw-semibold" style="color:#1a2a6c;">
+                        {{ log.action === 'login' ? '登入' : '登出' }}
+                      </div>
+                      <div class="text-muted" style="font-size:.72rem;">{{ formatLog(log) }}</div>
+                    </div>
                   </div>
                 </li>
               </ul>
