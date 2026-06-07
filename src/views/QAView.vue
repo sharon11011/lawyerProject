@@ -130,7 +130,7 @@ const faqs = [
       >
         <i class="bi bi-chat-left-text-fill fs-2 mb-2" style="color:#b8860b;"></i>
         <h5 class="fw-bold mb-2" style="color:#1a2a6c;">找不到您的問題？</h5>
-        <p class="text-muted small mb-3">歡迎直接聯繫我們，陳律師將親自為您解答。</p>
+        <p class="text-muted small mb-3">歡迎直接聯繫我們，林律師將親自為您解答。</p>
         <RouterLink to="/contact" class="btn btn-gold px-5">提出我的問題</RouterLink>
       </div>
     </div>

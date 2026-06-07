@@ -9,6 +9,7 @@ const navLinks = [
   { name: '首頁', to: '/' },
   { name: '專業領域', to: '/services' },
   { name: '關於律師', to: '/about' },
+  { name: '成功案例', to: '/cases' },
   { name: '法律知識 Q&A', to: '/qa' },
   { name: '聯繫我們', to: '/contact' },
 ]

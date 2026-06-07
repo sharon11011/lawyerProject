@@ -39,7 +39,7 @@ const currentYear = new Date().getFullYear()
           <h6 class="text-white fw-semibold mb-3">聯絡資訊</h6>
           <ul class="list-unstyled small" style="color: rgba(255,255,255,0.7); line-height: 2;">
             <li><i class="bi bi-telephone-fill me-2" style="color: #b8860b;"></i>0976-390-669</li>
-            <li><i class="bi bi-envelope-fill me-2" style="color: #b8860b;"></i>lawyer.jasonlin@gmail.com</li>
+            <li style="word-break:break-all;"><i class="bi bi-envelope-fill me-2" style="color: #b8860b;"></i>lawyer.jasonlin@gmail.com</li>
             <li>
               <a href="https://line.me/R/ti/p/@xiu_law" target="_blank" class="text-decoration-none" style="color:rgba(255,255,255,0.7);">
                 <i class="bi bi-chat-dots-fill me-2" style="color:#b8860b;"></i>LINE ID：@xiu_law
