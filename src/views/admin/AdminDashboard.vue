@@ -12,6 +12,16 @@ const sortDesc     = ref(true)
 const showSubjects = ref(false)
 const visitThis    = ref(null)
 const visitLast    = ref(null)
+const loginTime    = ref(sessionStorage.getItem('admin_login_time') || '—')
+const lastAction   = ref('')
+
+function stampAction(label) {
+  const now = new Date().toLocaleString('zh-TW', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  })
+  lastAction.value = `${label}｜${now}`
+}
 
 const subjectStats = [
   { label: '各類民事案件', color: '#198754' },
@@ -25,6 +35,7 @@ const subjectStats = [
 onMounted(async () => {
   load()
   await loadVisits()
+  stampAction('開啟後台')
 })
 
 function load() {
@@ -90,6 +101,12 @@ function logout() {
         </button>
       </div>
     </nav>
+
+    <!-- Session info bar -->
+    <div class="px-3 px-md-4 py-2 d-flex flex-wrap gap-3" style="background:#1a2a6c;font-size:.78rem;color:rgba(255,255,255,.65);">
+      <span><i class="bi bi-clock me-1" style="color:#b8860b;"></i>登入時間：{{ loginTime }}</span>
+      <span v-if="lastAction"><i class="bi bi-activity me-1" style="color:#b8860b;"></i>最後操作：{{ lastAction }}</span>
+    </div>
 
     <!-- Content -->
     <div class="container-fluid px-3 px-md-4 py-4">
@@ -185,13 +202,14 @@ function logout() {
                   type="text"
                   class="form-control border-start-0 ps-0"
                   placeholder="搜尋姓名、電話、事由..."
+                  @input="stampAction('搜尋紀錄')"
                 />
               </div>
             </div>
             <div class="col-auto ms-md-auto">
               <button
                 class="btn btn-sm btn-outline-secondary"
-                @click="sortDesc = !sortDesc"
+                @click="sortDesc = !sortDesc; stampAction(sortDesc ? '切換排序：最新' : '切換排序：最舊')"
               >
                 <i :class="sortDesc ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
                 {{ sortDesc ? '最新' : '最舊' }}
