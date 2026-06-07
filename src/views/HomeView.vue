@@ -8,7 +8,7 @@ const services = [
   { icon: 'bi-people-fill', title: '各類家事案件', desc: '離婚、未成年子女監護權、贍養費 等等' },
   { icon: 'bi-shield-fill', title: '各類刑事案件', desc: '從偵查到審判全程陪同，提供最有力的辯護策略，守護您的自由與清白。' },
   { icon: 'bi-building', title: '警局陪偵', desc: '收到傳票或遭警方約談，第一時間陪同到場，確保您的陳述不因緊張而失誤。' },
-  { icon: 'bi-file-earmark-text', title: '非訟事件', desc: '遺產繼承、公司登記、本票裁定、支付命令等非訴訟程序，快速有效處理。' },
+  { icon: 'bi-file-earmark-text', title: '非訟事件', desc: '遺產繼承、公司登記、本票裁定、支付命令等非訟程序，快速有效處理。' },
   { icon: 'bi-briefcase-fill', title: '法律顧問', desc: '提供企業及個人長期法律諮詢，合約審閱、風險評估，預防勝於治療。' },
 ]
 
