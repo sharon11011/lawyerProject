@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { supabase } from '@/config/supabase.js'
 
 const router   = useRouter()
 const username = ref('')
@@ -26,6 +27,7 @@ async function login() {
     })
     sessionStorage.setItem('admin_token', 'xiu_admin_authenticated')
     sessionStorage.setItem('admin_login_time', now)
+    supabase.from('admin_logs').insert({ username: 'admin', action: 'login', detail: now }).catch(() => {})
     router.push('/admin')
   } else {
     error.value = '帳號或密碼錯誤，請重新輸入'

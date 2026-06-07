@@ -1,12 +1,12 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { supabase } from '@/config/supabase.js'
 
-const STORAGE_KEY = 'xiu_submissions'
-const COUNTER_NS  = 'xiu-law-site'
 const router = useRouter()
 
 const submissions  = ref([])
+const adminLogs    = ref([])
 const search       = ref('')
 const sortDesc     = ref(true)
 const showSubjects = ref(false)
@@ -14,14 +14,6 @@ const visitThis    = ref(null)
 const visitLast    = ref(null)
 const loginTime    = ref(sessionStorage.getItem('admin_login_time') || '—')
 const lastAction   = ref('')
-
-function stampAction(label) {
-  const now = new Date().toLocaleString('zh-TW', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  })
-  lastAction.value = `${label}｜${now}`
-}
 
 const subjectStats = [
   { label: '各類民事案件', color: '#198754' },
@@ -33,13 +25,16 @@ const subjectStats = [
 ]
 
 onMounted(async () => {
-  load()
-  await loadVisits()
+  await Promise.all([load(), loadVisits(), loadLogs()])
   stampAction('開啟後台')
 })
 
-function load() {
-  submissions.value = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+async function load() {
+  const { data } = await supabase
+    .from('submissions')
+    .select('*')
+    .order('created_at', { ascending: false })
+  if (data) submissions.value = data
 }
 
 async function loadVisits() {
@@ -47,17 +42,31 @@ async function loadVisits() {
   const thisKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
   const last = new Date(now.getFullYear(), now.getMonth() - 1)
   const lastKey = `${last.getFullYear()}-${String(last.getMonth() + 1).padStart(2, '0')}`
-  try {
-    const [r1, r2] = await Promise.all([
-      fetch(`https://api.countapi.xyz/get/${COUNTER_NS}/${thisKey}`).then(r => r.json()),
-      fetch(`https://api.countapi.xyz/get/${COUNTER_NS}/${lastKey}`).then(r => r.json()),
-    ])
-    visitThis.value = r1.value ?? 0
-    visitLast.value = r2.value ?? 0
-  } catch {
-    visitThis.value = 0
-    visitLast.value = 0
-  }
+  const [{ count: c1 }, { count: c2 }] = await Promise.all([
+    supabase.from('visits').select('*', { count: 'exact', head: true }).eq('month', thisKey),
+    supabase.from('visits').select('*', { count: 'exact', head: true }).eq('month', lastKey),
+  ])
+  visitThis.value = c1 ?? 0
+  visitLast.value = c2 ?? 0
+}
+
+async function loadLogs() {
+  const { data } = await supabase
+    .from('admin_logs')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(10)
+  if (data) adminLogs.value = data
+}
+
+async function stampAction(label, detail = null) {
+  const now = new Date().toLocaleString('zh-TW', {
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  })
+  lastAction.value = `${label}｜${now}`
+  await supabase.from('admin_logs').insert({ username: 'admin', action: label, detail }).catch(() => {})
+  await loadLogs()
 }
 
 const visitDiff = computed(() => {
@@ -80,8 +89,18 @@ const filtered = computed(() => {
 })
 
 function logout() {
+  supabase.from('admin_logs').insert({ username: 'admin', action: 'logout', detail: null }).catch(() => {})
   sessionStorage.removeItem('admin_token')
+  sessionStorage.removeItem('admin_login_time')
   router.push('/admin/login')
+}
+
+function formatLog(log) {
+  const d = new Date(log.created_at)
+  return d.toLocaleString('zh-TW', {
+    month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
+  })
 }
 </script>
 
@@ -93,9 +112,7 @@ function logout() {
         <i class="bi bi-scales" style="color:#b8860b;"></i>修律 後台管理
       </span>
       <div class="d-flex align-items-center gap-3">
-        <span class="text-white-50 small d-none d-md-inline">
-          共 {{ submissions.length }} 筆諮詢紀錄
-        </span>
+        <span class="text-white-50 small d-none d-md-inline">共 {{ submissions.length }} 筆諮詢紀錄</span>
         <button class="btn btn-sm btn-outline-light" @click="logout">
           <i class="bi bi-box-arrow-right me-1"></i>登出
         </button>
@@ -111,7 +128,7 @@ function logout() {
     <!-- Content -->
     <div class="container-fluid px-3 px-md-4 py-4">
 
-      <!-- 造訪統計 -->
+      <!-- 造訪 + 諮詢統計 -->
       <div class="row g-3 mb-3">
         <div class="col-6 col-md-3">
           <div class="card border-0 shadow-sm h-100">
@@ -160,8 +177,7 @@ function logout() {
         </div>
       </div>
 
-      <!-- 諮詢事由統計（桌面版常駐；手機版可折疊） -->
-      <!-- 手機折疊按鈕 -->
+      <!-- 諮詢事由（手機可折疊） -->
       <div class="d-md-none mb-2">
         <button
           class="btn btn-sm w-100 fw-semibold"
@@ -172,7 +188,6 @@ function logout() {
           各類案件數量{{ showSubjects ? '（收合）' : '（展開）' }}
         </button>
       </div>
-
       <div :class="{ 'd-none': !showSubjects }" class="d-md-block">
         <div class="row g-3 mb-4">
           <div v-for="sub in subjectStats" :key="sub.label" class="col-6 col-md-4">
@@ -188,118 +203,145 @@ function logout() {
         </div>
       </div>
 
-      <!-- Toolbar -->
-      <div class="card border-0 shadow-sm mb-3">
-        <div class="card-body py-3">
-          <div class="row g-2 align-items-center">
-            <div class="col-12 col-md-6">
-              <div class="input-group">
-                <span class="input-group-text bg-white border-end-0">
-                  <i class="bi bi-search text-muted"></i>
-                </span>
-                <input
-                  v-model="search"
-                  type="text"
-                  class="form-control border-start-0 ps-0"
-                  placeholder="搜尋姓名、電話、事由..."
-                  @input="stampAction('搜尋紀錄')"
-                />
+      <div class="row g-3 mb-4">
+        <!-- 諮詢紀錄 -->
+        <div class="col-lg-8">
+          <!-- Toolbar -->
+          <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body py-3">
+              <div class="row g-2 align-items-center">
+                <div class="col-12 col-md-7">
+                  <div class="input-group">
+                    <span class="input-group-text bg-white border-end-0">
+                      <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input
+                      v-model="search"
+                      type="text"
+                      class="form-control border-start-0 ps-0"
+                      placeholder="搜尋姓名、電話、事由..."
+                      @input="stampAction('搜尋紀錄', search)"
+                    />
+                  </div>
+                </div>
+                <div class="col-auto ms-md-auto">
+                  <button
+                    class="btn btn-sm btn-outline-secondary"
+                    @click="sortDesc = !sortDesc; stampAction(sortDesc ? '排序：最新' : '排序：最舊')"
+                  >
+                    <i :class="sortDesc ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
+                    {{ sortDesc ? '最新' : '最舊' }}
+                  </button>
+                </div>
               </div>
             </div>
-            <div class="col-auto ms-md-auto">
-              <button
-                class="btn btn-sm btn-outline-secondary"
-                @click="sortDesc = !sortDesc; stampAction(sortDesc ? '切換排序：最新' : '切換排序：最舊')"
-              >
-                <i :class="sortDesc ? 'bi bi-sort-down' : 'bi bi-sort-up'"></i>
-                {{ sortDesc ? '最新' : '最舊' }}
-              </button>
+          </div>
+
+          <!-- Empty state -->
+          <div v-if="!filtered.length" class="card border-0 shadow-sm">
+            <div class="card-body text-center py-5">
+              <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+              <p class="text-muted mb-0">{{ search ? '找不到符合的紀錄' : '尚無諮詢紀錄' }}</p>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Empty state -->
-      <div v-if="!filtered.length" class="card border-0 shadow-sm">
-        <div class="card-body text-center py-5">
-          <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
-          <p class="text-muted mb-0">
-            {{ search ? '找不到符合的紀錄' : '尚無諮詢紀錄' }}
-          </p>
-        </div>
-      </div>
+          <!-- Desktop table -->
+          <div v-else class="card border-0 shadow-sm d-none d-md-block">
+            <div class="table-responsive">
+              <table class="table table-hover align-middle mb-0">
+                <thead style="background:#f0f3fa;">
+                  <tr>
+                    <th class="ps-4 fw-semibold text-muted small" style="width:3rem;">#</th>
+                    <th class="fw-semibold text-muted small" style="width:7rem;">姓名</th>
+                    <th class="fw-semibold text-muted small" style="width:9rem;">電話</th>
+                    <th class="fw-semibold text-muted small" style="width:8rem;">諮詢事由</th>
+                    <th class="fw-semibold text-muted small">問題說明</th>
+                    <th class="fw-semibold text-muted small" style="width:12rem;">送出時間</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, idx) in filtered" :key="item.id">
+                    <td class="ps-4 text-muted small">{{ idx + 1 }}</td>
+                    <td class="fw-semibold">{{ item.name }}</td>
+                    <td>
+                      <a :href="`tel:${item.phone}`" class="text-decoration-none" style="color:#1a2a6c;">{{ item.phone }}</a>
+                    </td>
+                    <td>
+                      <span class="badge rounded-pill px-2 py-1 small" style="background:#e8ecf8;color:#1a2a6c;font-weight:500;">
+                        {{ item.subject }}
+                      </span>
+                    </td>
+                    <td class="text-muted small" style="max-width:260px;">
+                      <div style="white-space:pre-wrap;word-break:break-word;max-height:4.5em;overflow:hidden;">{{ item.message }}</div>
+                    </td>
+                    <td class="small text-muted">{{ item.sent_at }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card-footer text-muted small py-2 px-4 border-0" style="background:#f8f9fb;">
+              顯示 {{ filtered.length }} / {{ submissions.length }} 筆
+            </div>
+          </div>
 
-      <!-- Desktop table -->
-      <div v-else class="card border-0 shadow-sm d-none d-lg-block">
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead style="background:#f0f3fa;">
-              <tr>
-                <th class="ps-4 fw-semibold text-muted small" style="width:3rem;">#</th>
-                <th class="fw-semibold text-muted small" style="width:7rem;">姓名</th>
-                <th class="fw-semibold text-muted small" style="width:9rem;">電話</th>
-                <th class="fw-semibold text-muted small" style="width:8rem;">諮詢事由</th>
-                <th class="fw-semibold text-muted small">問題說明</th>
-                <th class="fw-semibold text-muted small" style="width:12rem;">送出時間</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, idx) in filtered" :key="item.id">
-                <td class="ps-4 text-muted small">{{ idx + 1 }}</td>
-                <td class="fw-semibold">{{ item.name }}</td>
-                <td>
-                  <a :href="`tel:${item.phone}`" class="text-decoration-none" style="color:#1a2a6c;">
-                    {{ item.phone }}
-                  </a>
-                </td>
-                <td>
-                  <span class="badge rounded-pill px-2 py-1 small" style="background:#e8ecf8;color:#1a2a6c;font-weight:500;">
-                    {{ item.subject }}
-                  </span>
-                </td>
-                <td class="text-muted small" style="max-width:320px;">
-                  <div style="white-space:pre-wrap;word-break:break-word;max-height:4.5em;overflow:hidden;">{{ item.message }}</div>
-                </td>
-                <td class="small text-muted">{{ item.sentAt }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer text-muted small py-2 px-4 border-0" style="background:#f8f9fb;">
-          顯示 {{ filtered.length }} / {{ submissions.length }} 筆
-        </div>
-      </div>
-
-      <!-- Mobile cards -->
-      <div v-if="filtered.length" class="d-lg-none">
-        <div
-          v-for="(item) in filtered"
-          :key="item.id"
-          class="card border-0 shadow-sm mb-3"
-        >
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-start mb-2">
-              <div>
-                <span class="fw-bold me-2">{{ item.name }}</span>
-                <span class="badge rounded-pill small px-2" style="background:#e8ecf8;color:#1a2a6c;">
-                  {{ item.subject }}
-                </span>
+          <!-- Mobile cards -->
+          <div v-if="filtered.length" class="d-md-none">
+            <div v-for="item in filtered" :key="item.id" class="card border-0 shadow-sm mb-3">
+              <div class="card-body">
+                <div class="mb-2">
+                  <span class="fw-bold me-2">{{ item.name }}</span>
+                  <span class="badge rounded-pill small px-2" style="background:#e8ecf8;color:#1a2a6c;">{{ item.subject }}</span>
+                </div>
+                <div class="small text-muted mb-1">
+                  <i class="bi bi-telephone me-1"></i>
+                  <a :href="`tel:${item.phone}`" class="text-decoration-none text-muted">{{ item.phone }}</a>
+                </div>
+                <div class="small text-muted mb-2" style="white-space:pre-wrap;word-break:break-word;">{{ item.message }}</div>
+                <div class="small text-muted border-top pt-2 mt-1">
+                  <i class="bi bi-clock me-1"></i>{{ item.sent_at }}
+                </div>
               </div>
             </div>
-            <div class="small text-muted mb-1">
-              <i class="bi bi-telephone me-1"></i>
-              <a :href="`tel:${item.phone}`" class="text-decoration-none text-muted">{{ item.phone }}</a>
-            </div>
-            <div class="small text-muted mb-2" style="white-space:pre-wrap;word-break:break-word;">
-              {{ item.message }}
-            </div>
-            <div class="small text-muted border-top pt-2 mt-1">
-              <i class="bi bi-clock me-1"></i>{{ item.sentAt }}
-            </div>
+            <div class="text-center small text-muted py-2">顯示 {{ filtered.length }} / {{ submissions.length }} 筆</div>
           </div>
         </div>
-        <div class="text-center small text-muted py-2">
-          顯示 {{ filtered.length }} / {{ submissions.length }} 筆
+
+        <!-- 管理員操作紀錄 -->
+        <div class="col-lg-4">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-header border-0 py-3" style="background:#f0f3fa;">
+              <h6 class="fw-bold mb-0" style="color:#1a2a6c;">
+                <i class="bi bi-person-badge me-2" style="color:#b8860b;"></i>管理員操作紀錄
+              </h6>
+            </div>
+            <div class="card-body p-0">
+              <div v-if="!adminLogs.length" class="text-center py-4 text-muted small">尚無紀錄</div>
+              <ul v-else class="list-group list-group-flush">
+                <li
+                  v-for="log in adminLogs"
+                  :key="log.id"
+                  class="list-group-item px-3 py-2"
+                >
+                  <div class="d-flex justify-content-between align-items-center">
+                    <span class="small fw-semibold" style="color:#1a2a6c;">
+                      <i class="bi me-1" :class="{
+                        'bi-box-arrow-in-right': log.action === 'login',
+                        'bi-box-arrow-right':    log.action === 'logout',
+                        'bi-search':             log.action === '搜尋紀錄',
+                        'bi-sort-down':          log.action.startsWith('排序'),
+                        'bi-grid':               log.action === '開啟後台',
+                      }"></i>
+                      {{ log.action }}
+                    </span>
+                    <span class="text-muted" style="font-size:.72rem;">{{ formatLog(log) }}</span>
+                  </div>
+                  <div v-if="log.detail && log.action === '搜尋紀錄'" class="text-muted mt-1" style="font-size:.72rem;">
+                    關鍵字：{{ log.detail }}
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -308,7 +350,5 @@ function logout() {
 </template>
 
 <style scoped>
-.admin-bg {
-  background: #f0f3fa;
-}
+.admin-bg { background: #f0f3fa; }
 </style>

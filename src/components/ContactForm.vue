@@ -2,6 +2,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import emailjs from '@emailjs/browser'
 import { EMAILJS } from '@/config/emailjs.js'
+import { supabase } from '@/config/supabase.js'
 
 const STORAGE_KEY = 'xiu_submissions'
 
@@ -58,8 +59,17 @@ async function submitForm() {
     timestamp: now.toISOString(),
   }
 
-  // 儲存到 localStorage（供後台讀取）
+  // 儲存到 localStorage（本地備份）
   saveToStorage(submission)
+
+  // 儲存到 Supabase
+  supabase.from('submissions').insert({
+    name:    submission.name,
+    phone:   submission.phone,
+    subject: submission.subject,
+    message: submission.message,
+    sent_at: submission.sentAt,
+  }).catch(err => console.error('Supabase insert error:', err))
 
   // EmailJS 寄信（主收件人；其餘 email 請在 EmailJS 範本的 BCC 欄位設定）
   const templateParams = {
