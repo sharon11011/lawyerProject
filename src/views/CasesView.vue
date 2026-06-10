@@ -2,29 +2,11 @@
 import { ref, onMounted } from 'vue'
 import { supabase } from '@/config/supabase.js'
 
-const hardcoded = [
-  {
-    id: 'h1', title: '成功為當事人在二審爭取緩刑', tag: '刑事辯護',
-    result: '二審獲緩刑，免於入獄服刑',
-    description: '當事人因申辦貸款遭詐騙，被誤認為詐騙集團領款車手，一審被判處有期徒刑六月。本所介入後積極協助與被害人達成和解，並於二審提出完整辯護意見，成功爭取緩刑，使當事人得以免於入獄。',
-  },
-  {
-    id: 'h2', title: '轉讓禁藥案件成功爭取無罪判決', tag: '刑事辯護',
-    result: '法院判決無罪，為當事人洗清冤名',
-    description: '當事人遭友人指控轉讓第二級禁藥。本所深入分析證人證詞，找出陳述前後矛盾之關鍵瑕疵，透過嚴密的交互詰問質疑證人可信度，成功說服法院為當事人判決無罪。',
-  },
-  {
-    id: 'h3', title: '二十年有期徒刑第三審成功撤銷發回', tag: '刑事辯護',
-    result: '最高法院撤銷原判決，發回重審',
-    description: '當事人二審被判處二十年有期徒刑之貪汙重罪。本所在第三審提出原判決違背法令之論述，指出原審採證與事實認定之重大瑕疵，最終獲最高法院採納，撤銷原判決並發回高等法院重新審理。',
-  },
-]
-
-const cases = ref(hardcoded)
+const cases = ref([])
 
 onMounted(async () => {
   const { data } = await supabase.from('cases').select('*').order('created_at', { ascending: false })
-  if (data && data.length) cases.value = data
+  if (data) cases.value = data
 })
 </script>
 

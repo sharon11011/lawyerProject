@@ -23,12 +23,13 @@ const lastAction = ref('')
 const activeTab = ref('submissions')
 
 // ── Cases ──
-const cases       = ref([])
-const caseForm    = reactive({ title: '', tag: '刑事辯護', result: '', description: '' })
-const caseLoading = ref(false)
-const caseError   = ref('')
-const caseSuccess = ref(false)
-const tagOptions  = ['刑事辯護', '民事勝訴', '無罪判決', '緩刑爭取', '家事案件', '非訟事件']
+const cases        = ref([])
+const caseForm     = reactive({ title: '', tag: '刑事辯護', result: '', description: '' })
+const caseLoading  = ref(false)
+const caseError    = ref('')
+const caseSuccess  = ref(false)
+const editingCase  = ref(null)
+const tagOptions   = ['刑事辯護', '民事勝訴', '無罪判決', '緩刑爭取', '家事案件', '非訟事件']
 
 const subjectStats = [
   { label: '各類民事案件', color: '#198754' },
@@ -71,9 +72,35 @@ async function loadLogs() {
   if (data) adminLogs.value = data
 }
 
+const defaultCases = [
+  {
+    title: '成功為當事人在二審爭取緩刑', tag: '刑事辯護',
+    result: '二審獲緩刑，免於入獄服刑',
+    description: '當事人因申辦貸款遭詐騙，被誤認為詐騙集團領款車手，一審被判處有期徒刑六月。本所介入後積極協助與被害人達成和解，並於二審提出完整辯護意見，成功爭取緩刑，使當事人得以免於入獄。',
+  },
+  {
+    title: '轉讓禁藥案件成功爭取無罪判決', tag: '刑事辯護',
+    result: '法院判決無罪，為當事人洗清冤名',
+    description: '當事人遭友人指控轉讓第二級禁藥。本所深入分析證人證詞，找出陳述前後矛盾之關鍵瑕疵，透過嚴密的交互詰問質疑證人可信度，成功說服法院為當事人判決無罪。',
+  },
+  {
+    title: '二十年有期徒刑第三審成功撤銷發回', tag: '刑事辯護',
+    result: '最高法院撤銷原判決，發回重審',
+    description: '當事人二審被判處二十年有期徒刑之貪汙重罪。本所在第三審提出原判決違背法令之論述，指出原審採證與事實認定之重大瑕疵，最終獲最高法院採納，撤銷原判決並發回高等法院重新審理。',
+  },
+]
+
 async function loadCases() {
   const { data } = await supabase.from('cases').select('*').order('created_at', { ascending: false })
   if (data) cases.value = data
+}
+
+async function seedDefaultCases() {
+  if (!confirm('將前台3筆預設案例匯入資料庫，之後可在後台管理。確定？')) return
+  caseLoading.value = true
+  await supabase.from('cases').insert(defaultCases)
+  caseLoading.value = false
+  await loadCases()
 }
 
 async function stampAction(label, detail = null) {
@@ -142,9 +169,45 @@ async function addCase() {
   setTimeout(() => { caseSuccess.value = false }, 3000)
 }
 
+function startEditCase(c) {
+  editingCase.value = c
+  Object.assign(caseForm, { title: c.title, tag: c.tag, result: c.result, description: c.description })
+  caseError.value = ''
+  caseSuccess.value = false
+}
+
+function cancelEdit() {
+  editingCase.value = null
+  Object.assign(caseForm, { title: '', tag: '刑事辯護', result: '', description: '' })
+  caseError.value = ''
+}
+
+async function updateCase() {
+  if (!caseForm.title.trim() || !caseForm.tag.trim() || !caseForm.result.trim() || !caseForm.description.trim()) {
+    caseError.value = '請填寫所有欄位'
+    return
+  }
+  caseLoading.value = true
+  caseError.value = ''
+  const { error } = await supabase.from('cases').update({
+    title:       caseForm.title.trim(),
+    tag:         caseForm.tag.trim(),
+    result:      caseForm.result.trim(),
+    description: caseForm.description.trim(),
+  }).eq('id', editingCase.value.id)
+  caseLoading.value = false
+  if (error) { caseError.value = '更新失敗：' + error.message; return }
+  caseSuccess.value = true
+  editingCase.value = null
+  Object.assign(caseForm, { title: '', tag: '刑事辯護', result: '', description: '' })
+  await loadCases()
+  setTimeout(() => { caseSuccess.value = false }, 3000)
+}
+
 async function deleteCase(id) {
   if (!confirm('確定要刪除此案例？')) return
   await supabase.from('cases').delete().eq('id', id)
+  if (editingCase.value?.id === id) cancelEdit()
   await loadCases()
 }
 </script>
@@ -411,10 +474,14 @@ async function deleteCase(id) {
           <!-- 新增表單 -->
           <div class="col-lg-5">
             <div class="card border-0 shadow-sm">
-              <div class="card-header border-0 py-3 px-4" style="background:#f0f3fa;">
+              <div class="card-header border-0 py-3 px-4 d-flex align-items-center justify-content-between" style="background:#f0f3fa;">
                 <h6 class="fw-bold mb-0" style="color:#1a2a6c;">
-                  <i class="bi bi-plus-circle-fill me-2" style="color:#b8860b;"></i>新增案例
+                  <i :class="editingCase ? 'bi bi-pencil-fill' : 'bi bi-plus-circle-fill'" class="me-2" style="color:#b8860b;"></i>
+                  {{ editingCase ? '編輯案例' : '新增案例' }}
                 </h6>
+                <button v-if="editingCase" class="btn btn-sm btn-outline-secondary py-0" @click="cancelEdit">
+                  <i class="bi bi-x-lg me-1"></i>取消編輯
+                </button>
               </div>
               <div class="card-body px-4 py-4">
 
@@ -497,13 +564,14 @@ async function deleteCase(id) {
                   class="btn w-100 fw-bold py-2"
                   style="background:#1a2a6c;color:#fff;border-radius:.5rem;"
                   :disabled="caseLoading"
-                  @click="addCase"
+                  @click="editingCase ? updateCase() : addCase()"
                 >
                   <span v-if="caseLoading">
-                    <span class="spinner-border spinner-border-sm me-2"></span>新增中...
+                    <span class="spinner-border spinner-border-sm me-2"></span>{{ editingCase ? '更新中...' : '新增中...' }}
                   </span>
                   <span v-else>
-                    <i class="bi bi-plus-circle me-2"></i>新增案例
+                    <i :class="editingCase ? 'bi bi-check-circle' : 'bi bi-plus-circle'" class="me-2"></i>
+                    {{ editingCase ? '確認更新' : '新增案例' }}
                   </span>
                 </button>
               </div>
@@ -522,7 +590,10 @@ async function deleteCase(id) {
               <div class="card-body p-3">
                 <div v-if="!cases.length" class="text-center py-5 text-muted">
                   <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                  <p class="small mb-0">尚無案例，請在左方新增</p>
+                  <p class="small mb-2">尚無案例，請在左方新增</p>
+                  <button class="btn btn-sm fw-semibold" style="background:#e8ecf8;color:#1a2a6c;" @click="seedDefaultCases" :disabled="caseLoading">
+                    <i class="bi bi-cloud-upload me-1"></i>匯入前台預設3筆案例
+                  </button>
                 </div>
                 <div
                   v-for="c in cases" :key="c.id"
@@ -535,6 +606,14 @@ async function deleteCase(id) {
                     </h6>
                     <div class="d-flex align-items-center gap-2 ms-2 flex-shrink-0">
                       <span class="badge" style="background:#1a2a6c;font-size:.68rem;">{{ c.tag }}</span>
+                      <button
+                        class="btn btn-sm btn-outline-primary py-0 px-2"
+                        style="font-size:.75rem;"
+                        @click="startEditCase(c)"
+                        title="編輯"
+                      >
+                        <i class="bi bi-pencil"></i>
+                      </button>
                       <button
                         class="btn btn-sm btn-outline-danger py-0 px-2"
                         style="font-size:.75rem;"

@@ -71,17 +71,17 @@ async function login() {
 
           <form @submit.prevent="login" novalidate>
             <div class="mb-3">
-              <label class="form-label fw-semibold small">管理員信箱</label>
+              <label class="form-label fw-semibold small">管理員帳號</label>
               <div class="input-group">
                 <span class="input-group-text" style="background:#f0f2f8;border-color:#dee2e6;">
-                  <i class="bi bi-envelope-fill" style="color:#1a2a6c;"></i>
+                  <i class="bi bi-person-fill" style="color:#1a2a6c;"></i>
                 </span>
                 <input
                   v-model="email"
-                  type="email"
+                  type="text"
                   class="form-control"
-                  placeholder="請輸入管理員信箱"
-                  autocomplete="email"
+                  placeholder="請輸入管理員帳號"
+                  autocomplete="username"
                   @keydown.enter="login"
                 />
               </div>
