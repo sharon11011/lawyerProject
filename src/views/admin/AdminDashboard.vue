@@ -29,7 +29,7 @@ const caseLoading  = ref(false)
 const caseError    = ref('')
 const caseSuccess  = ref(false)
 const editingCase  = ref(null)
-const tagOptions   = ['刑事辯護', '民事勝訴', '無罪判決', '緩刑爭取', '家事案件', '非訟事件']
+const tagOptions   = ['民事糾紛', '刑事辯護', '家事案件', '非訟服務', '商業爭議', '法律顧問']
 
 const subjectStats = [
   { label: '各類民事案件', color: '#198754' },
