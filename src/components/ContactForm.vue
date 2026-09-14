@@ -3,6 +3,7 @@ import { ref, reactive, onMounted } from 'vue'
 import emailjs from '@emailjs/browser'
 import { EMAILJS } from '@/config/emailjs.js'
 import { supabase } from '@/config/supabase.js'
+import { formatDateTime } from '@/utils/datetime.js'
 
 const form = reactive({ name: '', phone: '', subject: '', message: '' })
 const honeypot    = ref('')
@@ -43,10 +44,7 @@ async function submitForm() {
   sendError.value = ''
 
   const now = new Date()
-  const sentAt = now.toLocaleString('zh-TW', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  })
+  const sentAt = formatDateTime(now)
 
   const templateParams = {
     from_name:  form.name.trim(),
@@ -57,6 +55,9 @@ async function submitForm() {
     to_email:   EMAILJS.TO_EMAILS[0],
   }
 
+  let dbOk = false
+  let emailOk = false
+
   try {
     const { error: dbErr } = await supabase.from('submissions').insert({
       name:    form.name.trim(),
@@ -65,18 +66,28 @@ async function submitForm() {
       message: form.message.trim(),
       sent_at: sentAt,
     })
+    dbOk = !dbErr
     if (dbErr) console.error('Supabase insert error:', dbErr)
+  } catch (err) {
+    console.error('Supabase insert error:', err)
+  }
 
+  try {
     if (EMAILJS.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
       await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_ID, templateParams)
+      emailOk = true
     }
+  } catch (err) {
+    console.error('EmailJS send error:', err)
+  }
+
+  loading.value = false
+
+  if (dbOk || emailOk) {
     lastSubmit.value = Date.now()
     submitted.value = true
-  } catch (err) {
-    console.error('送出錯誤:', err)
-    submitted.value = true
-  } finally {
-    loading.value = false
+  } else {
+    sendError.value = '送出失敗，請稍後再試，或直接撥打 0976-390-669 與我們聯繫。'
   }
 }
 
@@ -104,22 +115,22 @@ function reset() {
 
     <div class="row g-3">
       <div class="col-md-6">
-        <label class="form-label fw-semibold">姓名 <span class="text-danger">*</span></label>
-        <input v-model="form.name" type="text" class="form-control"
+        <label for="contact-name" class="form-label fw-semibold">姓名 <span class="text-danger">*</span></label>
+        <input id="contact-name" v-model="form.name" type="text" class="form-control"
           :class="{ 'is-invalid': errors.name }" placeholder="您的大名" />
         <div class="invalid-feedback">{{ errors.name }}</div>
       </div>
 
       <div class="col-md-6">
-        <label class="form-label fw-semibold">聯絡電話 <span class="text-danger">*</span></label>
-        <input v-model="form.phone" type="tel" class="form-control"
+        <label for="contact-phone" class="form-label fw-semibold">聯絡電話 <span class="text-danger">*</span></label>
+        <input id="contact-phone" v-model="form.phone" type="tel" class="form-control"
           :class="{ 'is-invalid': errors.phone }" placeholder="0912-345-678" />
         <div class="invalid-feedback">{{ errors.phone }}</div>
       </div>
 
       <div class="col-12">
-        <label class="form-label fw-semibold">諮詢事由 <span class="text-danger">*</span></label>
-        <select v-model="form.subject" class="form-select"
+        <label for="contact-subject" class="form-label fw-semibold">諮詢事由 <span class="text-danger">*</span></label>
+        <select id="contact-subject" v-model="form.subject" class="form-select"
           :class="{ 'is-invalid': errors.subject }">
           <option value="">請選擇...</option>
           <option v-for="s in subjects" :key="s" :value="s">{{ s }}</option>
@@ -128,8 +139,8 @@ function reset() {
       </div>
 
       <div class="col-12">
-        <label class="form-label fw-semibold">問題說明 <span class="text-danger">*</span></label>
-        <textarea v-model="form.message" rows="5" class="form-control"
+        <label for="contact-message" class="form-label fw-semibold">問題說明 <span class="text-danger">*</span></label>
+        <textarea id="contact-message" v-model="form.message" rows="5" class="form-control"
           :class="{ 'is-invalid': errors.message }"
           placeholder="請簡述您的法律問題或諮詢需求..."></textarea>
         <div class="invalid-feedback">{{ errors.message }}</div>

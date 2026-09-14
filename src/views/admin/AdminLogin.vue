@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/config/supabase.js'
+import { formatDateTime } from '@/utils/datetime.js'
 
 const router   = useRouter()
 const email    = ref('')
@@ -31,10 +32,7 @@ async function login() {
     return
   }
 
-  const now = new Date().toLocaleString('zh-TW', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  })
+  const now = formatDateTime()
   sessionStorage.setItem('admin_login_time', now)
 
   supabase.from('admin_logs').insert({
@@ -71,12 +69,13 @@ async function login() {
 
           <form @submit.prevent="login" novalidate>
             <div class="mb-3">
-              <label class="form-label fw-semibold small">管理員帳號</label>
+              <label for="admin-email" class="form-label fw-semibold small">管理員帳號</label>
               <div class="input-group">
                 <span class="input-group-text" style="background:#f0f2f8;border-color:#dee2e6;">
                   <i class="bi bi-person-fill" style="color:#1a2a6c;"></i>
                 </span>
                 <input
+                  id="admin-email"
                   v-model="email"
                   type="text"
                   class="form-control"
@@ -88,12 +87,13 @@ async function login() {
             </div>
 
             <div class="mb-4">
-              <label class="form-label fw-semibold small">密碼</label>
+              <label for="admin-password" class="form-label fw-semibold small">密碼</label>
               <div class="input-group">
                 <span class="input-group-text" style="background:#f0f2f8;border-color:#dee2e6;">
                   <i class="bi bi-lock-fill" style="color:#1a2a6c;"></i>
                 </span>
                 <input
+                  id="admin-password"
                   v-model="password"
                   :type="showPwd ? 'text' : 'password'"
                   class="form-control"

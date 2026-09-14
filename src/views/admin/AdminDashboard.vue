@@ -2,6 +2,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { supabase } from '@/config/supabase.js'
+import { formatDateTime } from '@/utils/datetime.js'
 
 const router = useRouter()
 
@@ -104,10 +105,7 @@ async function seedDefaultCases() {
 }
 
 async function stampAction(label, detail = null) {
-  const now = new Date().toLocaleString('zh-TW', {
-    year: 'numeric', month: '2-digit', day: '2-digit',
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-  })
+  const now = formatDateTime()
   lastAction.value = `${label}｜${now}`
   await supabase.from('admin_logs').insert({ username: loginUser.value || 'admin', action: label, detail }).catch(() => {})
   await loadLogs()
@@ -140,10 +138,7 @@ async function logout() {
 
 function formatLog(log) {
   try {
-    return new Date(log.created_at).toLocaleString('zh-TW', {
-      year: 'numeric', month: '2-digit', day: '2-digit',
-      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false,
-    })
+    return formatDateTime(log.created_at)
   } catch { return '—' }
 }
 

@@ -1,6 +1,6 @@
 <script setup>
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import { Collapse } from 'bootstrap'
+import Collapse from 'bootstrap/js/dist/collapse'
 
 const route = useRoute()
 const router = useRouter()
